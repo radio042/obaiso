@@ -1,5 +1,0 @@
-GET /orders/ORD-1234
-GET /products/CB-9001
-GET /customers/CUST-777
-GET /inventory/stock/CB-9001
-GET /deliveries/DEL-555

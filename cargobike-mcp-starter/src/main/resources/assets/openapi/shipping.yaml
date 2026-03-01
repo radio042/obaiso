@@ -1,0 +1,56 @@
+
+openapi: 3.1.0
+info:
+  title: Shipping Service
+  version: 1.0.0
+  x-semantic: { base: https://example.com/ont/cargobike# }
+servers: [ { url: https://api.example.com } ]
+paths:
+  /api/shipping/quote:
+    post:
+      summary: Get shipping quote
+      operationId: getShippingQuote
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuoteRequest'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/ShipmentQuote'
+components:
+  schemas:
+    QuoteRequest:
+      type: object
+      properties:
+        postalCode: { type: string, x-semantic: cb:postalCode }
+        countryCode: { type: string, x-semantic: cb:countryCode }
+        weightKg: { type: number, format: float, x-semantic: cb:hasWeightKg }
+      required: [postalCode, weightKg]
+    Price:
+      type: object
+      x-semantic: cb:Price
+      properties:
+        amount: { type: number, format: float, x-semantic: cb:amount }
+        currency: { type: string, x-semantic: cb:currency }
+      required: [amount, currency]
+    Address:
+      type: object
+      x-semantic: cb:Address
+      properties:
+        postalCode: { type: string, x-semantic: cb:postalCode }
+        countryCode: { type: string, x-semantic: cb:countryCode }
+    ShipmentQuote:
+      type: object
+      x-semantic: cb:ShipmentQuote
+      properties:
+        shipsTo: { $ref: '#/components/schemas/Address', x-semantic: cb:shipsTo }
+        totalWeightKg: { type: number, format: float, x-semantic: cb:hasWeightKg }
+        hasTotalPrice: { $ref: '#/components/schemas/Price', x-semantic: cb:hasTotalPrice }
+        estimatedDays: { type: integer, x-semantic: cb:estimatedDays }
+      required: [shipsTo, hasTotalPrice]

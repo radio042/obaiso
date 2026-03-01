@@ -1,0 +1,62 @@
+
+openapi: 3.1.0
+info:
+  title: Catalog Service
+  version: 1.0.0
+  description: List and describe cargo bikes.
+  x-semantic:
+    base: https://example.com/ont/cargobike#
+servers:
+  - url: https://api.example.com
+paths:
+  /api/catalog/cargo-bikes:
+    get:
+      summary: List cargo bikes
+      operationId: listCargoBikes
+      responses:
+        "200":
+          description: OK
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      oneOf:
+                        - $ref: '#/components/schemas/CargoBike'
+                        - $ref: '#/components/schemas/EbikeCargoBike'
+components:
+  schemas:
+    CargoBike:
+      type: object
+      x-semantic: cb:CargoBike
+      properties:
+        sku:
+          type: string
+          x-semantic: cb:hasSku
+        modelName:
+          type: string
+          x-semantic: cb:modelName
+        weightKg:
+          type: number
+          format: float
+          x-semantic: cb:hasWeightKg
+        maxPayloadKg:
+          type: number
+          format: float
+          x-semantic: cb:hasMaxPayloadKg
+        wheelCount:
+          type: integer
+          x-semantic: cb:hasWheelCount
+      required: [sku, modelName]
+    EbikeCargoBike:
+      allOf:
+        - $ref: '#/components/schemas/CargoBike'
+        - type: object
+          x-semantic: cb:EbikeCargoBike
+          properties:
+            batteryCapacityWh:
+              type: integer
+              x-semantic: cb:hasBatteryCapacityWh

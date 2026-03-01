@@ -1,0 +1,45 @@
+
+openapi: 3.1.0
+info:
+  title: Customers Service
+  version: 1.0.0
+  x-semantic: { base: https://example.com/ont/cargobike# }
+servers: [ { url: https://api.example.com } ]
+paths:
+  /api/customers/{customerId}:
+    get:
+      summary: Get customer by ID
+      operationId: getCustomer
+      parameters:
+        - in: path
+          name: customerId
+          required: true
+          schema: { type: string }
+          x-semantic: cb:customerId
+      responses:
+        "200":
+          description: OK
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+components:
+  schemas:
+    Address:
+      type: object
+      x-semantic: cb:Address
+      properties:
+        street: { type: string, x-semantic: cb:street }
+        city: { type: string, x-semantic: cb:city }
+        postalCode: { type: string, x-semantic: cb:postalCode }
+        countryCode: { type: string, x-semantic: cb:countryCode }
+      required: [postalCode, countryCode]
+    Customer:
+      type: object
+      x-semantic: cb:Customer
+      properties:
+        customerId: { type: string, x-semantic: cb:customerId }
+        fullName: { type: string, x-semantic: cb:fullName }
+        email: { type: string, format: email, x-semantic: cb:email }
+        hasAddress: { $ref: '#/components/schemas/Address', x-semantic: cb:hasAddress }
+      required: [customerId]

@@ -1,0 +1,39 @@
+{
+  "name": "Catalog - List Cargo Bikes",
+  "request": {
+    "method": "GET",
+    "urlPath": "/api/catalog/cargo-bikes"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/ld+json"
+    },
+    "jsonBody": {
+      "@context": {
+        "@vocab": "https://example.com/ont/cargobike#",
+        "cb": "https://example.com/ont/cargobike#"
+      },
+      "@type": "Collection",
+      "items": [
+        {
+          "@type": "cb:CargoBike",
+          "cb:hasSku": "SKU-CB-001",
+          "cb:modelName": "CargoMaster 500",
+          "cb:hasWeightKg": 38.5,
+          "cb:hasMaxPayloadKg": 200,
+          "cb:hasWheelCount": 2
+        },
+        {
+          "@type": "cb:EbikeCargoBike",
+          "cb:hasSku": "SKU-ECB-900",
+          "cb:modelName": "E-Cargo Pro",
+          "cb:hasWeightKg": 42.0,
+          "cb:hasMaxPayloadKg": 220,
+          "cb:hasWheelCount": 3,
+          "cb:hasBatteryCapacityWh": 750
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "name": "Shipping - Quote",
+  "request": {
+    "method": "POST",
+    "urlPath": "/api/shipping/quote",
+    "bodyPatterns": [
+      {
+        "matchesJsonPath": "$.postalCode"
+      },
+      {
+        "matchesJsonPath": "$.weightKg"
+      }
+    ]
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/ld+json"
+    },
+    "jsonBody": {
+      "@context": {
+        "@vocab": "https://example.com/ont/cargobike#",
+        "cb": "https://example.com/ont/cargobike#"
+      },
+      "@type": "cb:ShipmentQuote",
+      "cb:shipsTo": {
+        "@type": "cb:Address",
+        "cb:postalCode": "90402",
+        "cb:countryCode": "DE"
+      },
+      "cb:totalWeightKg": 42.0,
+      "cb:hasTotalPrice": {
+        "@type": "cb:Price",
+        "cb:amount": 79.9,
+        "cb:currency": "EUR"
+      },
+      "cb:estimatedDays": 3
+    }
+  }
+}

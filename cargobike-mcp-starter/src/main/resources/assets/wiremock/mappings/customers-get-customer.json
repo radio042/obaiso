@@ -1,0 +1,30 @@
+{
+  "name": "Customers - Get Customer",
+  "request": {
+    "method": "GET",
+    "urlPattern": "/api/customers/CUST-[0-9]+"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/ld+json"
+    },
+    "jsonBody": {
+      "@context": {
+        "@vocab": "https://example.com/ont/cargobike#",
+        "cb": "https://example.com/ont/cargobike#"
+      },
+      "@type": "cb:Customer",
+      "cb:customerId": "CUST-123",
+      "cb:fullName": "Alex M\u00fcller",
+      "cb:email": "alex@example.com",
+      "cb:hasAddress": {
+        "@type": "cb:Address",
+        "cb:street": "Hauptstra\u00dfe 1",
+        "cb:city": "N\u00fcrnberg",
+        "cb:postalCode": "90402",
+        "cb:countryCode": "DE"
+      }
+    }
+  }
+}

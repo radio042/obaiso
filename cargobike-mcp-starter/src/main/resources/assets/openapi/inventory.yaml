@@ -1,0 +1,35 @@
+
+openapi: 3.1.0
+info:
+  title: Inventory Service
+  version: 1.0.0
+  x-semantic: { base: https://example.com/ont/cargobike# }
+servers: [ { url: https://api.example.com } ]
+paths:
+  /api/inventory/{sku}:
+    get:
+      summary: Get inventory for SKU
+      operationId: getInventoryForSku
+      parameters:
+        - in: path
+          name: sku
+          required: true
+          schema: { type: string }
+          x-semantic: cb:hasSku
+      responses:
+        "200":
+          description: OK
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/InventoryItem'
+components:
+  schemas:
+    InventoryItem:
+      type: object
+      x-semantic: cb:InventoryItem
+      properties:
+        sku: { type: string, x-semantic: cb:hasSku }
+        hasQuantity: { type: integer, x-semantic: cb:hasQuantity }
+        warehouseCode: { type: string, x-semantic: cb:warehouseCode }
+      required: [sku, hasQuantity]

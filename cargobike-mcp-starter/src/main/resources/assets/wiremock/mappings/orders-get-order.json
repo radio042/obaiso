@@ -1,0 +1,44 @@
+{
+  "name": "Orders - Get Order",
+  "request": {
+    "method": "GET",
+    "urlPattern": "/api/orders/ORD-[0-9]+"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/ld+json"
+    },
+    "jsonBody": {
+      "@context": {
+        "@vocab": "https://example.com/ont/cargobike#",
+        "cb": "https://example.com/ont/cargobike#"
+      },
+      "@type": "cb:Order",
+      "cb:orderId": "ORD-1001",
+      "cb:orderedBy": {
+        "@type": "cb:Customer",
+        "cb:customerId": "CUST-123",
+        "cb:email": "alex@example.com"
+      },
+      "cb:hasStatus": "PROCESSING",
+      "cb:hasItem": [
+        {
+          "@type": "cb:OrderItem",
+          "cb:hasSku": "SKU-ECB-900",
+          "cb:quantity": 1,
+          "cb:hasUnitPrice": {
+            "@type": "cb:Price",
+            "cb:amount": 4299.0,
+            "cb:currency": "EUR"
+          }
+        }
+      ],
+      "cb:hasTotalPrice": {
+        "@type": "cb:Price",
+        "cb:amount": 4299.0,
+        "cb:currency": "EUR"
+      }
+    }
+  }
+}

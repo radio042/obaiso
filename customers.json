@@ -1,9 +1,0 @@
-{
-  "@context": {
-    "@vocab": "http://example.com/cargobikes#"
-  },
-  "@type": "Customer",
-  "id": "CUST-777",
-  "fullName": "Alex Meyer",
-  "email": "alex.meyer@example.com"
-}

@@ -1,0 +1,62 @@
+
+openapi: 3.1.0
+info:
+  title: Orders Service
+  version: 1.0.0
+  x-semantic: { base: https://example.com/ont/cargobike# }
+servers: [ { url: https://api.example.com } ]
+paths:
+  /api/orders/{orderId}:
+    get:
+      summary: Get order by ID
+      operationId: getOrder
+      parameters:
+        - in: path
+          name: orderId
+          required: true
+          schema: { type: string }
+          x-semantic: cb:orderId
+      responses:
+        "200":
+          description: OK
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Order'
+components:
+  schemas:
+    Price:
+      type: object
+      x-semantic: cb:Price
+      properties:
+        amount: { type: number, format: float, x-semantic: cb:amount }
+        currency: { type: string, x-semantic: cb:currency }
+      required: [amount, currency]
+    OrderItem:
+      type: object
+      x-semantic: cb:OrderItem
+      properties:
+        sku: { type: string, x-semantic: cb:hasSku }
+        quantity: { type: integer, x-semantic: cb:quantity }
+        unitPrice: { $ref: '#/components/schemas/Price' }
+      required: [sku, quantity]
+    Customer:
+      type: object
+      x-semantic: cb:Customer
+      properties:
+        customerId: { type: string, x-semantic: cb:customerId }
+        email: { type: string, format: email, x-semantic: cb:email }
+      required: [customerId]
+    Order:
+      type: object
+      x-semantic: cb:Order
+      properties:
+        orderId: { type: string, x-semantic: cb:orderId }
+        hasStatus: { type: string, x-semantic: cb:hasStatus }
+        orderedBy: { $ref: '#/components/schemas/Customer', x-semantic: cb:orderedBy }
+        hasItem:
+          type: array
+          items: { $ref: '#/components/schemas/OrderItem' }
+          x-semantic: cb:hasItem
+        hasTotalPrice: { $ref: '#/components/schemas/Price', x-semantic: cb:hasTotalPrice }
+      required: [orderId, orderedBy]

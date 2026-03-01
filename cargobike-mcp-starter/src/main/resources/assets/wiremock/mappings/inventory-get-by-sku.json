@@ -1,0 +1,23 @@
+{
+  "name": "Inventory - Get by SKU",
+  "request": {
+    "method": "GET",
+    "urlPattern": "/api/inventory/SKU-[A-Z]+-[0-9]+"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/ld+json"
+    },
+    "jsonBody": {
+      "@context": {
+        "@vocab": "https://example.com/ont/cargobike#",
+        "cb": "https://example.com/ont/cargobike#"
+      },
+      "@type": "cb:InventoryItem",
+      "cb:hasSku": "SKU-ECB-900",
+      "cb:hasQuantity": 7,
+      "cb:warehouseCode": "NUE-01"
+    }
+  }
+}

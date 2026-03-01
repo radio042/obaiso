@@ -1,0 +1,281 @@
+openapi: 3.1.0
+info:
+  title: CargoBike Enterprise API
+  version: "1.0.0"
+  description: >
+    Unified API specification for the 5 microservices in the CargoBike e-commerce
+    enterprise. All schemas are annotated with semantic references to the shared
+    RDFS ontology at http://example.com/cargobikes#.
+
+servers:
+  - url: https://api.cargobikes.example.com
+
+tags:
+  - name: ProductService
+  - name: OrderService
+  - name: CustomerService
+  - name: InventoryService
+  - name: DeliveryService
+
+components:
+  schemas:
+
+    #########################################################
+    # JSON-LD Context
+    #########################################################
+    OntologyContext:
+      type: object
+      example:
+        "@context":
+          "@vocab": "http://example.com/cargobikes#"
+
+
+    #########################################################
+    # PRODUCT SERVICE SCHEMAS
+    #########################################################
+    CargoBike:
+      type: object
+      x-semantic: "http://example.com/cargobikes#CargoBike"
+      properties:
+        "@context": { $ref: "#/components/schemas/OntologyContext" }
+        "@type":
+          type: string
+          example: "CargoBike"
+        id:
+          type: string
+        name:
+          type: string
+        maxLoadKg:
+          type: integer
+        composedOf:
+          type: array
+          items:
+            $ref: "#/components/schemas/BikeComponent"
+      required: ["id", "name"]
+
+    BikeComponent:
+      type: object
+      x-semantic: "http://example.com/cargobikes#BikeComponent"
+      properties:
+        "@type":
+          type: string
+          example: "BikeComponent"
+        id:
+          type: string
+        name:
+          type: string
+
+
+    #########################################################
+    # ORDER SERVICE SCHEMAS
+    #########################################################
+    Order:
+      type: object
+      x-semantic: "http://example.com/cargobikes#Order"
+      properties:
+        "@context": { $ref: "#/components/schemas/OntologyContext" }
+        "@type":
+          type: string
+          example: "Order"
+        id:
+          type: string
+        status:
+          type: string
+        placedBy:
+          $ref: "#/components/schemas/Customer"
+        hasItem:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderItem"
+
+    OrderItem:
+      type: object
+      x-semantic: "http://example.com/cargobikes#OrderItem"
+      properties:
+        "@type":
+          type: string
+          example: "OrderItem"
+        id:
+          type: string
+        quantity:
+          type: integer
+        forProduct:
+          $ref: "#/components/schemas/CargoBike"
+
+
+    #########################################################
+    # CUSTOMER SERVICE SCHEMAS
+    #########################################################
+    Customer:
+      type: object
+      x-semantic: "http://example.com/cargobikes#Customer"
+      properties:
+        "@type":
+          type: string
+          example: "Customer"
+        id:
+          type: string
+        fullName:
+          type: string
+        email:
+          type: string
+
+
+    #########################################################
+    # INVENTORY SERVICE SCHEMAS
+    #########################################################
+    StockItem:
+      type: object
+      x-semantic: "http://example.com/cargobikes#StockItem"
+      properties:
+        "@type":
+          type: string
+          example: "StockItem"
+        id:
+          type: string
+        quantity:
+          type: integer
+        refersToProduct:
+          $ref: "#/components/schemas/CargoBike"
+        storedIn:
+          $ref: "#/components/schemas/Warehouse"
+
+    Warehouse:
+      type: object
+      x-semantic: "http://example.com/cargobikes#Warehouse"
+      properties:
+        "@type":
+          type: string
+          example: "Warehouse"
+        id:
+          type: string
+        name:
+          type: string
+
+
+    #########################################################
+    # DELIVERY SERVICE SCHEMAS
+    #########################################################
+    Delivery:
+      type: object
+      x-semantic: "http://example.com/cargobikes#Delivery"
+      properties:
+        "@type":
+          type: string
+          example: "Delivery"
+        id:
+          type: string
+        status:
+          type: string
+        estimatedArrival:
+          type: string
+          format: date-time
+        deliveryFor:
+          $ref: "#/components/schemas/Order"
+
+
+paths:
+
+  ###########################################################
+  # PRODUCT SERVICE
+  ###########################################################
+  /products/{id}:
+    get:
+      tags: [ProductService]
+      summary: Get a cargo bike by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: CargoBike response
+          content:
+            application/ld+json:
+              schema:
+                $ref: "#/components/schemas/CargoBike"
+
+
+  ###########################################################
+  # ORDER SERVICE
+  ###########################################################
+  /orders/{id}:
+    get:
+      tags: [OrderService]
+      summary: Get an order by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Order response
+          content:
+            application/ld+json:
+              schema:
+                $ref: "#/components/schemas/Order"
+
+
+  ###########################################################
+  # CUSTOMER SERVICE
+  ###########################################################
+  /customers/{id}:
+    get:
+      tags: [CustomerService]
+      summary: Get a customer by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Customer response
+          content:
+            application/ld+json:
+              schema:
+                $ref: "#/components/schemas/Customer"
+
+
+  ###########################################################
+  # INVENTORY SERVICE
+  ###########################################################
+  /inventory/stock/{productId}:
+    get:
+      tags: [InventoryService]
+      summary: Get stock information for a product
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: StockItem response
+          content:
+            application/ld+json:
+              schema:
+                $ref: "#/components/schemas/StockItem"
+
+
+  ###########################################################
+  # DELIVERY SERVICE
+  ###########################################################
+  /deliveries/{id}:
+    get:
+      tags: [DeliveryService]
+      summary: Get delivery details
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Delivery response
+          content:
+            application/ld+json:
+              schema:
+                $ref: "#/components/schemas/Delivery"

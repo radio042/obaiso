@@ -1,0 +1,23 @@
+{
+  "@context": {
+    "@vocab": "http://example.com/cargobikes#"
+  },
+  "@type": "Order",
+  "id": "ORD-1234",
+  "status": "Confirmed",
+  "placedBy": {
+    "@type": "Customer",
+    "id": "CUST-777"
+  },
+  "hasItem": [
+    {
+      "@type": "OrderItem",
+      "id": "ITEM1",
+      "quantity": 1,
+      "forProduct": {
+        "@type": "CargoBike",
+        "id": "CB-9001"
+      }
+    }
+  ]
+}

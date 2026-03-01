@@ -1,0 +1,13 @@
+{
+  "@context": {
+    "@vocab": "http://example.com/cargobikes#"
+  },
+  "@type": "Delivery",
+  "id": "DEL-555",
+  "deliveryFor": {
+    "@type": "Order",
+    "id": "ORD-1234"
+  },
+  "status": "OutForDelivery",
+  "estimatedArrival": "2026-02-28T15:00:00Z"
+}

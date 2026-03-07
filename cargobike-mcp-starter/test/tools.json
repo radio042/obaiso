@@ -1,0 +1,122 @@
+{
+  "tools": [
+    {
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "name": "listCargoBikes",
+      "description": "Return the full catalog of available cargo bikes."
+    },
+    {
+      "inputSchema": {
+        "required": [
+          "sku"
+        ],
+        "type": "object",
+        "properties": {
+          "sku": {
+            "type": "string",
+            "x-semantic": {
+              "property": "cb:hasSku",
+              "ontology": "https://example.com/ont/cargobike#"
+            }
+          }
+        }
+      },
+      "name": "getBikeBySku",
+      "description": "Return catalog info for a single cargo bike by SKU."
+    },
+    {
+      "inputSchema": {
+        "required": [
+          "customerId"
+        ],
+        "type": "object",
+        "properties": {
+          "customerId": {
+            "type": "string",
+            "x-semantic": {
+              "property": "cb:customerId",
+              "ontology": "https://example.com/ont/cargobike#"
+            }
+          }
+        }
+      },
+      "name": "getCustomer",
+      "description": "Return customer details by customer ID (format: CUST-{number})."
+    },
+    {
+      "inputSchema": {
+        "required": [
+          "sku"
+        ],
+        "type": "object",
+        "properties": {
+          "sku": {
+            "type": "string",
+            "x-semantic": {
+              "property": "cb:hasSku",
+              "ontology": "https://example.com/ont/cargobike#"
+            }
+          }
+        }
+      },
+      "name": "getInventoryBySku",
+      "description": "Return stock/inventory levels for a cargo bike by SKU."
+    },
+    {
+      "inputSchema": {
+        "required": [
+          "orderId"
+        ],
+        "type": "object",
+        "properties": {
+          "orderId": {
+            "type": "string",
+            "x-semantic": {
+              "property": "cb:orderId",
+              "ontology": "https://example.com/ont/cargobike#"
+            }
+          }
+        }
+      },
+      "name": "getOrder",
+      "description": "Return order details by order ID (format: ORD-{number})."
+    },
+    {
+      "inputSchema": {
+        "required": [
+          "postalCode",
+          "weightKg"
+        ],
+        "type": "object",
+        "properties": {
+          "postalCode": {
+            "type": "string",
+            "x-semantic": {
+              "property": "cb:postalCode",
+              "ontology": "https://example.com/ont/cargobike#"
+            }
+          },
+          "weightKg": {
+            "type": "number",
+            "x-semantic": {
+              "property": "cb:hasWeightKg",
+              "ontology": "https://example.com/ont/cargobike#"
+            }
+          },
+          "countryCode": {
+            "type": "string",
+            "x-semantic": {
+              "property": "cb:countryCode",
+              "ontology": "https://example.com/ont/cargobike#"
+            }
+          }
+        }
+      },
+      "name": "getShipmentQuote",
+      "description": "Return a shipping quote for a given weight and destination."
+    }
+  ]
+}

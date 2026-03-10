@@ -234,24 +234,18 @@ public class ToolsRegistry {
         "cb:hasQuantity", 7,
         "cb:warehouseCode", "NUE-01"
       );
-      case "getOrder" -> Map.of(
-        "@context", ctx,
-        "@type", "cb:Order",
-        "cb:orderId", args.path("orderId").asText(),
-        "cb:orderedBy", Map.of(
-          "@type", "cb:Customer",
-          "cb:customerId", "CUST-123",
-          "cb:email", "alex@example.com"
-        ),
-        "cb:hasStatus", "PROCESSING",
-        "cb:hasItem", List.of(Map.of(
-          "@type", "cb:OrderItem",
-          "cb:hasSku", "SKU-ECB-900",
-          "cb:quantity", 1,
-          "cb:hasUnitPrice", Map.of("@type", "cb:Price", "cb:amount", 4299.0, "cb:currency", "EUR")
-        )),
-        "cb:hasTotalPrice", Map.of("@type", "cb:Price", "cb:amount", 4299.0, "cb:currency", "EUR")
-      );
+      case "getOrder" -> {
+        String orderId = args.path("orderId").asText();
+        yield ORDERS.stream()
+          .filter(o -> orderId.equals(o.get("cb:orderId")))
+          .map(o -> {
+            Map<String, Object> result = new LinkedHashMap<>(o);
+            result.put("@context", ctx);
+            return (Object) result;
+          })
+          .findFirst()
+          .orElse(Map.of("error", "No order found with ID: " + orderId));
+      }
       case "getShipmentQuote" -> {
         double weight = args.path("weightKg").asDouble(40.0);
         double price = 49.90 + Math.max(0, weight - 20) * 1.2;

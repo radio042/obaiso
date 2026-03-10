@@ -36,7 +36,8 @@ public class ToolsRegistry {
       "cb:modelName", "CargoMaster 500",
       "cb:hasWeightKg", 38.5,
       "cb:hasMaxPayloadKg", 200,
-      "cb:hasWheelCount", 2
+      "cb:hasWheelCount", 2,
+      "cb:hasStockQuantity", 7
     ),
     Map.of(
       "@type", "cb:EbikeCargoBike",
@@ -45,7 +46,8 @@ public class ToolsRegistry {
       "cb:hasWeightKg", 42.0,
       "cb:hasMaxPayloadKg", 220,
       "cb:hasWheelCount", 3,
-      "cb:hasBatteryCapacityWh", 750
+      "cb:hasBatteryCapacityWh", 750,
+      "cb:hasStockQuantity", 3
     )
   );
 

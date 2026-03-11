@@ -6,7 +6,7 @@ ground Claude's understanding of domain concepts, and runs an agentic tool-use
 loop to answer natural-language questions.
 
 Usage:
-    ANTHROPIC_API_KEY=sk-... python chatbot.py
+    python chatbot.py  # reads ANTHROPIC_API_KEY from .env
 """
 
 import asyncio
@@ -14,21 +14,20 @@ import json
 import pathlib
 import re
 import sys
-
+from dotenv import load_dotenv
 import anthropic
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
-# ---------------------------------------------------------------------------
-# Paths (relative to this file's location)
-# ---------------------------------------------------------------------------
 
-_BASE = pathlib.Path(__file__).parent.parent
+_BASE = pathlib.Path(__file__).parent
+_PARENT = _BASE.parent
+load_dotenv(_BASE / ".env")
 
 ONTOLOGY_PATH = (
-    _BASE / "cargobike-mcp-starter/src/main/resources/assets/ontology/cargobike.ttl"
+        _PARENT / "cargobike-mcp-starter/src/main/resources/assets/ontology/cargobike.ttl"
 )
-MCP_JAR = _BASE / "cargobike-mcp-starter/target/quarkus-app/quarkus-run.jar"
+MCP_JAR = _PARENT / "cargobike-mcp-starter/target/quarkus-app/quarkus-run.jar"
 
 MODEL = "claude-sonnet-4-6"
 

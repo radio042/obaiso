@@ -1,7 +1,13 @@
 To run:
+
+Create .env file with the following content:
+```
+ANTHROPIC_API_KEY=sk-...
+```
+In terminal:
 ```bash
 pip install -r requirements.txt
-ANTHROPIC_API_KEY=sk-... python chatbot.py
+python chatbot.py
 ```
 
 Example questions to try:

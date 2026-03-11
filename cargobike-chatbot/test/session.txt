@@ -59,7 +59,7 @@ You: How many E-Cargo Pros are in stock?
 
 Assistant: There are currently **3 E-Cargo Pros** in stock (SKU: SKU-ECB-900), held at warehouse NUE-01.
 
-You: What's the status of order ORD-1001?
+You: What's the status of ORD-1001?
   [tool] getOrder({"orderId": "ORD-1001"})
 
   ┌─ Reasoning trace ────────────────────────────────────
@@ -70,25 +70,25 @@ You: What's the status of order ORD-1001?
 
 Assistant: I'm sorry, but I couldn't find any order with the ID **ORD-1001**. It's possible that the order ID might be incorrect or the order doesn't exist in our system. Could you double-check the order ID and try again? Order IDs typically follow the format **ORD-{number}** (e.g., ORD-1002).
 
-You: What's the status of order ORD-002?
+You: What's the status of ORD-002?
   [tool] getOrder({"orderId": "ORD-002"})
 
   ┌─ Reasoning trace ────────────────────────────────────
   │  Intent   : Check the current status of order ORD-002.
-  │  Concepts : https://example.com/ont/cargobike#Order, https://example.com/ont/cargobike#hasStatus, https://example.com/ont/cargobike#orderId
-  │  Tool     : getOrder — justified by https://example.com/ont/cargobike#Order — the user is asking about an cb:Order identified by cb:orderId 'ORD-002'
+  │  Concepts : https://example.com/ont/cargobike#Order, https://example.com/ont/cargobike#orderId, https://example.com/ont/cargobike#hasStatus
+  │  Tool     : getOrder — justified by https://example.com/ont/cargobike#Order — the user provided an cb:orderId value, and getOrder operates on cb:Order to return its cb:hasStatus property.
   └──────────────────────────────────────────────────────
 
-Assistant: Order ORD-002 has been **shipped**! 🚚
+Assistant: Order ORD-002 has been **SHIPPED**! 🚚
 
 Here's a quick summary:
 - **Order ID:** ORD-002
-- **Status:** SHIPPED
+- **Status:** Shipped
 - **Customer:** maria@example.com (CUST-456)
 - **Items:** 2× SKU-CB-001 @ €1,899.00 each
-- **Order Total:** €3,798.00
+- **Total:** €3,798.00
 
-If you need more details, such as tracking information or delivery address, feel free to ask!
+Let me know if you need any more details about this order!
 
 You: How much does it cost to ship 34 kg to postal code 80331?
   [tool] getShipmentQuote({"postalCode": "80331", "weightKg": 34})

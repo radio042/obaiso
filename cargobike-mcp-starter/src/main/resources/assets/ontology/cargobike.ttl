@@ -3,12 +3,21 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix dbo:  <http://dbpedia.org/ontology/> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix wd:   <http://www.wikidata.org/entity/> .
+@prefix gr:   <http://purl.org/goodrelations/v1#> .
 
 ###########
 # Classes #
 ###########
 
 cb:CargoBike a rdfs:Class ;
+  rdfs:subClassOf dbo:Bicycle ;
+  rdfs:subClassOf gr:ProductOrServiceModel ;
+  skos:broadMatch wd:Q11442 ;
+  owl:hasKey (cb:hasSku) ;
   rdfs:label "Cargo Bike" ;
   rdfs:comment "A bike designed to carry loads." .
 
@@ -18,12 +27,15 @@ cb:EbikeCargoBike a rdfs:Class ;
   rdfs:comment "An electrically-assisted cargo bike." .
 
 cb:Order a rdfs:Class ;
+  owl:hasKey (cb:orderId) ;
   rdfs:label "Order" .
 
 cb:OrderItem a rdfs:Class ;
   rdfs:label "Order Item" .
 
 cb:Customer a rdfs:Class ;
+  rdfs:subClassOf gr:BusinessEntity ;
+  owl:hasKey (cb:customerId) ;
   rdfs:label "Customer" .
 
 cb:InventoryItem a rdfs:Class ;
@@ -36,6 +48,7 @@ cb:Address a rdfs:Class ;
   rdfs:label "Address" .
 
 cb:ShipmentQuote a rdfs:Class ;
+  skos:relatedMatch gr:DeliveryChargeSpecification ;
   rdfs:label "Shipment Quote" .
 
 ################
@@ -46,7 +59,9 @@ cb:hasSku a rdf:Property ;
   rdfs:label "has SKU" ;
   rdfs:domain [ a rdfs:Class ;
                 rdfs:unionOf ( cb:CargoBike cb:InventoryItem cb:OrderItem ) ] ;
-  rdfs:range xsd:string .
+  rdfs:range [ a rdfs:Datatype ;
+               owl:onDatatype xsd:string ;
+               owl:withRestrictions ( [ xsd:pattern "SKU-E?CB-[0-9]+" ] ) ] .
 
 cb:modelName a rdf:Property ;
   rdfs:domain cb:CargoBike ;
@@ -70,7 +85,9 @@ cb:hasBatteryCapacityWh a rdf:Property ;
 
 cb:orderId a rdf:Property ;
   rdfs:domain cb:Order ;
-  rdfs:range xsd:string .
+  rdfs:range [ a rdfs:Datatype ;
+               owl:onDatatype xsd:string ;
+               owl:withRestrictions ( [ xsd:pattern "ORD-[0-9]+" ] ) ] .
 
 cb:hasStatus a rdf:Property ;
   rdfs:domain cb:Order ;
@@ -96,7 +113,9 @@ cb:warehouseCode a rdf:Property ;
 
 cb:customerId a rdf:Property ;
   rdfs:domain cb:Customer ;
-  rdfs:range xsd:string .
+  rdfs:range [ a rdfs:Datatype ;
+               owl:onDatatype xsd:string ;
+               owl:withRestrictions ( [ xsd:pattern "CUST-[0-9]+" ] ) ] .
 
 cb:fullName a rdf:Property ;
   rdfs:domain cb:Customer ;

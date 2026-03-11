@@ -110,14 +110,7 @@ interpret user requests and map them to the correct tool and arguments:
 ```
 
 Semantic mapping hints:
-- "cargo bike" / "bike"          → cb:CargoBike        (listCargoBikes, getBikeBySku)
-- "electric" / "e-bike"          → cb:EbikeCargoBike   (subclass of cb:CargoBike)
 - "stock" / "availability"       → cb:InventoryItem     (getInventoryBySku)
-- "shipping cost" / "delivery"   → cb:ShipmentQuote     (getShipmentQuote)
-- "order" / "order status"       → cb:Order             (getOrder)
-- "customer" / "buyer"           → cb:Customer          (getCustomer)
-- cb:hasSku identifies a bike; SKUs look like SKU-CB-001 or SKU-ECB-900
-- Customer IDs look like CUST-123, order IDs like ORD-1001
 
 ONTOLOGY-GROUNDED REASONING
 Before choosing a tool, you MAY call queryOntology with a SPARQL SELECT query to

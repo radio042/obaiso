@@ -6,7 +6,7 @@ ground Claude's understanding of domain concepts, and runs an agentic tool-use
 loop to answer natural-language questions.
 
 Usage:
-    ANTHROPIC_API_KEY=sk-... python chatbot.py
+    python chatbot.py  # reads ANTHROPIC_API_KEY from .env
 """
 
 import asyncio
@@ -14,23 +14,81 @@ import json
 import pathlib
 import re
 import sys
-
+from dotenv import load_dotenv
 import anthropic
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
-# ---------------------------------------------------------------------------
-# Paths (relative to this file's location)
-# ---------------------------------------------------------------------------
 
-_BASE = pathlib.Path(__file__).parent.parent
+_BASE = pathlib.Path(__file__).parent
+_PARENT = _BASE.parent
+load_dotenv(_BASE / ".env")
 
 ONTOLOGY_PATH = (
-    _BASE / "cargobike-mcp-starter/src/main/resources/assets/ontology/cargobike.ttl"
+        _PARENT / "cargobike-mcp-starter/src/main/resources/assets/ontology/cargobike.ttl"
 )
-MCP_JAR = _BASE / "cargobike-mcp-starter/target/quarkus-app/quarkus-run.jar"
+MCP_JAR = _PARENT / "cargobike-mcp-starter/target/quarkus-app/quarkus-run.jar"
 
 MODEL = "claude-sonnet-4-6"
+
+OUTPUT_SCHEMA = {
+    "format": {
+        "type": "json_schema",
+        "schema": {
+            "type": "object",
+            "description": "Structured response containing explainability reasoning and a user-facing answer.",
+            "properties": {
+                "reasoning": {
+                    "type": "object",
+                    "description": "Explainability artifact tracing how the answer was derived from ontology concepts and tool calls.",
+                    "properties": {
+                        "user_intent": {
+                            "type": "string",
+                            "description": "One-line summary of what the user is asking."
+                        },
+                        "mapped_concepts": {
+                            "type": "array",
+                            "description": "Ontology URIs or concept names (e.g. cb:CargoBike) used to interpret the request.",
+                            "items": {"type": "string"}
+                        },
+                        "inferences_used": {
+                            "type": "array",
+                            "description": "RDFS/OWL inferences applied (e.g. 'cb:EbikeCargoBike rdfs:subClassOf cb:CargoBike'). Empty list if none.",
+                            "items": {"type": "string"}
+                        },
+                        "tools_selected": {
+                            "type": "array",
+                            "description": "Each tool that was called, with the ontology concept that justifies its selection.",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "tool": {
+                                        "type": "string",
+                                        "description": "Name of the MCP tool that was called."
+                                    },
+                                    "justified_by": {
+                                        "type": "string",
+                                        "description": "Ontology concept or property that motivated choosing this tool."
+                                    }
+                                },
+                                "required": ["tool", "justified_by"],
+                                "additionalProperties": False
+                            }
+                        }
+                    },
+                    "required": ["user_intent", "mapped_concepts", "inferences_used", "tools_selected"],
+                    "additionalProperties": False
+                },
+                "answer": {
+                    "type": "string",
+                    "description": "Friendly plain-language answer to the user's question."
+                }
+            },
+            "required": ["reasoning", "answer"],
+            "additionalProperties": False
+        }
+    }
+}
 
 
 # ---------------------------------------------------------------------------
@@ -52,39 +110,16 @@ interpret user requests and map them to the correct tool and arguments:
 ```
 
 Semantic mapping hints:
-- "cargo bike" / "bike"          → cb:CargoBike        (listCargoBikes, getBikeBySku)
-- "electric" / "e-bike"          → cb:EbikeCargoBike   (subclass of cb:CargoBike)
 - "stock" / "availability"       → cb:InventoryItem     (getInventoryBySku)
-- "shipping cost" / "delivery"   → cb:ShipmentQuote     (getShipmentQuote)
-- "order" / "order status"       → cb:Order             (getOrder)
-- "customer" / "buyer"           → cb:Customer          (getCustomer)
-- cb:hasSku identifies a bike; SKUs look like SKU-CB-001 or SKU-ECB-900
-- Customer IDs look like CUST-123, order IDs like ORD-1001
 
 ONTOLOGY-GROUNDED REASONING
 Before choosing a tool, you MAY call queryOntology with a SPARQL SELECT query to
 verify class hierarchies or property applicability (e.g., confirm that
 cb:EbikeCargoBike is a subclass of cb:CargoBike before calling listCargoBikes).
 
-STRUCTURED RESPONSE FORMAT
-Your final answer (once all tool calls are done) MUST be a JSON object with
-exactly two keys — no prose before or after it:
-
-{{
-  "reasoning": {{
-    "user_intent": "<one-line summary of what the user is asking>",
-    "mapped_concepts": ["<ontology URI or concept used>", ...],
-    "inferences_used": ["<e.g. cb:EbikeCargoBike rdfs:subClassOf cb:CargoBike>", ...],
-    "tools_selected": [
-      {{"tool": "<toolName>", "justified_by": "<ontology concept or property>"}}
-    ]
-  }},
-  "answer": "<friendly plain-language answer to the user>"
-}}
-
-The "reasoning" block is the explainability artifact — every concept must be a
-real URI from the ontology above. If no ontology inference was needed, set
-"inferences_used" to [].
+In your final answer, populate the reasoning block with real URIs from the ontology
+above. Every concept in mapped_concepts and inferences_used must be a real URI.
+If no ontology inference was needed, set inferences_used to an empty list.
 """
 
 
@@ -170,6 +205,7 @@ async def run_agent(
             system=system,
             tools=claude_tools,
             messages=history,
+            output_config=OUTPUT_SCHEMA,
         )
 
         tool_uses = [b for b in response.content if b.type == "tool_use"]

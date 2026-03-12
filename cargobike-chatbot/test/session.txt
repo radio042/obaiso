@@ -1,0 +1,147 @@
+Cargo Bike Assistant
+Type your question, or 'quit' to exit.
+
+You: What bikes do You have?
+  [tool] listCargoBikes({})
+
+  ┌─ Reasoning trace ────────────────────────────────────
+  │  Intent   : List all available cargo bikes in the store catalog.
+  │  Concepts : https://example.com/ont/cargobike#CargoBike, https://example.com/ont/cargobike#EbikeCargoBike, https://example.com/ont/cargobike#hasSku, https://example.com/ont/cargobike#modelName, https://example.com/ont/cargobike#hasWeightKg, https://example.com/ont/cargobike#hasMaxPayloadKg, https://example.com/ont/cargobike#hasWheelCount, https://example.com/ont/cargobike#hasBatteryCapacityWh
+  │  Inferred : https://example.com/ont/cargobike#EbikeCargoBike rdfs:subClassOf https://example.com/ont/cargobike#CargoBike
+  │  Tool     : listCargoBikes — justified by https://example.com/ont/cargobike#CargoBike
+  └──────────────────────────────────────────────────────
+
+Assistant: We currently carry **3 bikes** in our catalog:
+
+---
+
+### 🚲 1. CargoMaster 500
+- **SKU:** SKU-CB-001
+- **Type:** Cargo Bike
+- **Wheels:** 2
+- **Bike Weight:** 38.5 kg
+- **Max Payload:** 200 kg
+
+---
+
+### ⚡ 2. E-Cargo Pro
+- **SKU:** SKU-ECB-900
+- **Type:** Electric Cargo Bike (E-Bike)
+- **Wheels:** 3
+- **Bike Weight:** 42.0 kg
+- **Max Payload:** 220 kg
+- **Battery Capacity:** 750 Wh
+
+---
+
+### 🚲 3. UrbanHauler 300
+- **SKU:** SKU-CB-002
+- **Type:** Cargo Bike
+- **Wheels:** 2
+- **Bike Weight:** 34.0 kg
+- **Max Payload:** 150 kg
+
+---
+
+Would you like more details on any of these bikes, such as availability, pricing, or shipping costs? 😊
+
+You: How many E-Cargo Pros are in stock?
+  [tool] listCargoBikes({})
+  [tool] getInventoryBySku({"sku": "SKU-ECB-900"})
+
+  ┌─ Reasoning trace ────────────────────────────────────
+  │  Intent   : Find out how many E-Cargo Pro bikes are currently in stock.
+  │  Concepts : cb:EbikeCargoBike, cb:CargoBike, cb:InventoryItem, cb:hasSku, cb:hasQuantity, cb:warehouseCode
+  │  Inferred : cb:EbikeCargoBike rdfs:subClassOf cb:CargoBike
+  │  Tool     : listCargoBikes — justified by cb:CargoBike — used to locate the SKU for the E-Cargo Pro model, leveraging the cb:EbikeCargoBike subClassOf cb:CargoBike inference
+  │  Tool     : getInventoryBySku — justified by cb:InventoryItem — used to retrieve current stock level via cb:hasSku (SKU-ECB-900)
+  └──────────────────────────────────────────────────────
+
+Assistant: There are currently **3 E-Cargo Pros** in stock (SKU: SKU-ECB-900), held at warehouse NUE-01.
+
+You: What's the status of ORD-1001?
+  [tool] getOrder({"orderId": "ORD-1001"})
+
+  ┌─ Reasoning trace ────────────────────────────────────
+  │  Intent   : Check the status of order ORD-1001.
+  │  Concepts : https://example.com/ont/cargobike#Order, https://example.com/ont/cargobike#orderId, https://example.com/ont/cargobike#hasStatus
+  │  Tool     : getOrder — justified by cb:Order identified by cb:orderId, with cb:hasStatus describing its lifecycle state.
+  └──────────────────────────────────────────────────────
+
+Assistant: I'm sorry, but I couldn't find any order with the ID **ORD-1001**. It's possible that the order ID might be incorrect or the order doesn't exist in our system. Could you double-check the order ID and try again? Order IDs typically follow the format **ORD-{number}** (e.g., ORD-1002).
+
+You: What's the status of ORD-002?
+  [tool] getOrder({"orderId": "ORD-002"})
+
+  ┌─ Reasoning trace ────────────────────────────────────
+  │  Intent   : Check the current status of order ORD-002.
+  │  Concepts : https://example.com/ont/cargobike#Order, https://example.com/ont/cargobike#orderId, https://example.com/ont/cargobike#hasStatus
+  │  Tool     : getOrder — justified by https://example.com/ont/cargobike#Order — the user provided an cb:orderId value, and getOrder operates on cb:Order to return its cb:hasStatus property.
+  └──────────────────────────────────────────────────────
+
+Assistant: Order ORD-002 has been **SHIPPED**! 🚚
+
+Here's a quick summary:
+- **Order ID:** ORD-002
+- **Status:** Shipped
+- **Customer:** maria@example.com (CUST-456)
+- **Items:** 2× SKU-CB-001 @ €1,899.00 each
+- **Total:** €3,798.00
+
+Let me know if you need any more details about this order!
+
+You: How much does it cost to ship 34 kg to postal code 80331?
+  [tool] getShipmentQuote({"postalCode": "80331", "weightKg": 34})
+
+  ┌─ Reasoning trace ────────────────────────────────────
+  │  Intent   : Get a shipping cost quote for 34 kg to postal code 80331.
+  │  Concepts : https://example.com/ont/cargobike#ShipmentQuote, https://example.com/ont/cargobike#Address, https://example.com/ont/cargobike#hasWeightKg, https://example.com/ont/cargobike#postalCode, https://example.com/ont/cargobike#hasTotalPrice, https://example.com/ont/cargobike#estimatedDays
+  │  Tool     : getShipmentQuote — justified by https://example.com/ont/cargobike#ShipmentQuote — the tool returns a cb:ShipmentQuote for a given weight (cb:hasWeightKg) and destination (cb:postalCode)
+  └──────────────────────────────────────────────────────
+
+Assistant: Shipping 34 kg to postal code 80331 (Germany) would cost **€66.70**, with an estimated delivery time of **3 business days**.
+
+You: How much does it cost to ship SKU-CB-002 to postal code 80331?
+  [tool] getBikeBySku({"sku": "SKU-CB-002"})
+  [tool] getShipmentQuote({"postalCode": "80331", "weightKg": 34.0})
+
+  ┌─ Reasoning trace ────────────────────────────────────
+  │  Intent   : Get the shipping cost for cargo bike SKU-CB-002 to postal code 80331.
+  │  Concepts : cb:CargoBike, cb:hasSku, cb:hasWeightKg, cb:ShipmentQuote, cb:hasTotalPrice, cb:postalCode, cb:estimatedDays
+  │  Tool     : getBikeBySku — justified by cb:hasSku — needed to look up the bike's cb:hasWeightKg, which is a required input for the shipment quote.
+  │  Tool     : getShipmentQuote — justified by cb:ShipmentQuote — directly models a shipping cost estimate given cb:postalCode and cb:hasWeightKg.
+  └──────────────────────────────────────────────────────
+
+Assistant: Shipping the **UrbanHauler 300 (SKU-CB-002)** to postal code **80331 (DE)** would cost **€66.70**, with an estimated delivery time of **3 business days**. This is based on the bike's weight of 34 kg.
+
+You: Are there orders for bikes out of stock?
+  [tool] listOrders({})
+  [tool] listCargoBikes({})
+  [tool] getInventoryBySku({"sku": "SKU-ECB-900"})
+  [tool] getInventoryBySku({"sku": "SKU-CB-001"})
+  [tool] getInventoryBySku({"sku": "SKU-CB-002"})
+
+  ┌─ Reasoning trace ────────────────────────────────────
+  │  Intent   : Find out if any orders exist for bikes that are currently out of stock.
+  │  Concepts : https://example.com/ont/cargobike#Order, https://example.com/ont/cargobike#OrderItem, https://example.com/ont/cargobike#CargoBike, https://example.com/ont/cargobike#InventoryItem, https://example.com/ont/cargobike#hasSku, https://example.com/ont/cargobike#hasStatus, https://example.com/ont/cargobike#quantity
+  │  Inferred : https://example.com/ont/cargobike#EbikeCargoBike rdfs:subClassOf https://example.com/ont/cargobike#CargoBike
+  │  Tool     : listOrders — justified by https://example.com/ont/cargobike#Order — needed to get all active orders and their associated cb:OrderItem SKUs
+  │  Tool     : listCargoBikes — justified by https://example.com/ont/cargobike#CargoBike — needed to enumerate all bikes and match SKUs from orders
+  │  Tool     : getInventoryBySku — justified by https://example.com/ont/cargobike#InventoryItem — needed to check cb:hasQuantity for each SKU found in orders
+  └──────────────────────────────────────────────────────
+
+Assistant: Yes! There is one order for an out-of-stock bike:
+
+| Order | Status | Bike | SKU | Qty Ordered | Stock Available |
+|-------|--------|------|-----|-------------|----------------|
+| ORD-003 | PAID | UrbanHauler 300 | SKU-CB-002 | 1 | **0 (Out of Stock)** |
+
+Order **ORD-003** (placed by customer CUST-789, lars@example.com) is in **PAID** status and includes 1× UrbanHauler 300 (SKU-CB-002), but there are currently **0 units** in stock at warehouse NUE-01.
+
+The other two orders are fine:
+- **ORD-001** (E-Cargo Pro, SKU-ECB-900): 3 units in stock ✅
+- **ORD-002** (CargoMaster 500, SKU-CB-001): 7 units in stock ✅
+
+You may want to prioritize restocking SKU-CB-002 or contact the customer about the delay.
+
+You: quit

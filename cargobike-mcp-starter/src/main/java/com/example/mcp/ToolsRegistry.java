@@ -160,7 +160,7 @@ public class ToolsRegistry {
         ),
         Map.of(
           "name", "getCustomer",
-          "description", "Return customer details by customer ID (format: CUST-{number}).",
+          "description", "Return customer details by customer ID.",
           "x-semantic", getOntologyResult("cb:Customer", "cb:Customer"),
           "inputSchema", Map.of(
             "type", "object",
@@ -182,7 +182,7 @@ public class ToolsRegistry {
         ),
         Map.of(
           "name", "getOrder",
-          "description", "Return order details by order ID (format: ORD-{number}).",
+          "description", "Return order details by order ID.",
           "x-semantic", getOntologyResult("cb:Order", "cb:Order"),
           "inputSchema", Map.of(
             "type", "object",

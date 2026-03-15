@@ -16,12 +16,7 @@ public class ResourcesRegistry {
             "openapi/orders.yaml",
             "openapi/customers.yaml",
             "openapi/inventory.yaml",
-            "openapi/shipping.yaml",
-            "wiremock/mappings/catalog-get-cargo-bikes.json",
-            "wiremock/mappings/orders-get-order.json",
-            "wiremock/mappings/customers-get-customer.json",
-            "wiremock/mappings/inventory-get-by-sku.json",
-            "wiremock/mappings/shipping-post-quote.json")
+            "openapi/shipping.yaml")
             .map(p -> Map.of(
                 "id", p,
                 "name", p.substring(p.lastIndexOf('/') + 1),

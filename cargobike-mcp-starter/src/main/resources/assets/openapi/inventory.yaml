@@ -8,7 +8,7 @@ paths:
   /api/inventory/{sku}:
     get:
       summary: Get inventory for SKU
-      operationId: getInventoryForSku
+      operationId: getInventoryBySku
       parameters:
         - in: path
           name: sku

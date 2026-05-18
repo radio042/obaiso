@@ -146,109 +146,36 @@ public class ToolsRegistry {
   );
 
   public Map<String, Object> list() {
-    return Map.of(
-      "tools", List.of(
-        Map.of(
-          "name", "listCargoBikes",
-          "x-semantic", getOntologyResult("cat:CargoBike", "cat:CargoBike"),
-          "inputSchema", Map.of("type", "object", "properties", Map.of())
-        ),
-        Map.of(
-          "name", "listOrders",
-          "x-semantic", getOntologyResult("ord:Order", "ord:Order"),
-          "inputSchema", Map.of("type", "object", "properties", Map.of())
-        ),
-        Map.of(
-          "name", "getBikeBySku",
-          "x-semantic", getOntologyResult("cat:CargoBike", "cat:CargoBike"),
-          "inputSchema", Map.of(
-            "type", "object",
-            "properties", Map.of(
-              "sku", Map.of("type", "string", "x-semantic", getOntologyProperty("cat:hasSku"))),
-            "required", List.of("sku")
+    List<Map<String, Object>> tools = new ArrayList<>(OpenApiToolLoader.loadAll());
+    tools.add(Map.of(
+      "name", "queryOntology",
+      "description", "Execute a SPARQL SELECT query against the cargo bike domain ontology "
+        + "(Apache Jena, OWL-micro inference enabled). Use this to look up class hierarchies, "
+        + "discover applicable properties for a concept, and verify subclass/range inferences "
+        + "before choosing other tools. "
+        + "Available prefixes: "
+        + "cat: <" + NS_CAT + ">, "
+        + "cus: <" + NS_CUS + ">, "
+        + "inv: <" + NS_INV + ">, "
+        + "ord: <" + NS_ORD + ">, "
+        + "shp: <" + NS_SHP + ">.",
+      "inputSchema", Map.of(
+        "type", "object",
+        "properties", Map.of(
+          "sparql", Map.of(
+            "type", "string",
+            "description", "A SPARQL 1.1 SELECT query. Declare needed prefixes, e.g.: "
+              + "PREFIX cat: <" + NS_CAT + "> "
+              + "PREFIX cus: <" + NS_CUS + "> "
+              + "PREFIX inv: <" + NS_INV + "> "
+              + "PREFIX ord: <" + NS_ORD + "> "
+              + "PREFIX shp: <" + NS_SHP + ">"
           )
         ),
-        Map.of(
-          "name", "getCustomer",
-          "x-semantic", getOntologyResult("cus:Customer", "cus:Customer"),
-          "inputSchema", Map.of(
-            "type", "object",
-            "properties", Map.of(
-              "customerId", Map.of("type", "string", "x-semantic", getOntologyProperty("cus:customerId"))),
-            "required", List.of("customerId")
-          )
-        ),
-        Map.of(
-          "name", "getInventoryBySku",
-          "x-semantic", getOntologyResult("cat:CargoBike", "inv:InventoryItem"),
-          "inputSchema", Map.of(
-            "type", "object",
-            "properties", Map.of(
-              "sku", Map.of("type", "string", "x-semantic", getOntologyProperty("cat:hasSku"))),
-            "required", List.of("sku")
-          )
-        ),
-        Map.of(
-          "name", "getOrder",
-          "x-semantic", getOntologyResult("ord:Order", "ord:Order"),
-          "inputSchema", Map.of(
-            "type", "object",
-            "properties", Map.of(
-              "orderId", Map.of("type", "string", "x-semantic", getOntologyProperty("ord:orderId"))),
-            "required", List.of("orderId")
-          )
-        ),
-        Map.of(
-          "name", "getShipmentQuote",
-          "x-semantic", getOntologyResult("cus:Address", "shp:ShipmentQuote"),
-          "inputSchema", Map.of(
-            "type", "object",
-            "properties", Map.of(
-              "postalCode", Map.of("type", "string", "x-semantic", getOntologyProperty("cus:postalCode")),
-              "countryCode", Map.of("type", "string", "x-semantic", getOntologyProperty("cus:countryCode")),
-              "weightKg", Map.of("type", "number", "x-semantic", getOntologyProperty("cat:hasWeightKg"))
-            ),
-            "required", List.of("postalCode", "weightKg")
-          )
-        ),
-        Map.of(
-          "name", "queryOntology",
-          "description", "Execute a SPARQL SELECT query against the cargo bike domain ontology "
-            + "(Apache Jena, OWL-micro inference enabled). Use this to look up class hierarchies, "
-            + "discover applicable properties for a concept, and verify subclass/range inferences "
-            + "before choosing other tools. "
-            + "Available prefixes: "
-            + "cat: <" + NS_CAT + ">, "
-            + "cus: <" + NS_CUS + ">, "
-            + "inv: <" + NS_INV + ">, "
-            + "ord: <" + NS_ORD + ">, "
-            + "shp: <" + NS_SHP + ">.",
-          "inputSchema", Map.of(
-            "type", "object",
-            "properties", Map.of(
-              "sparql", Map.of(
-                "type", "string",
-                "description", "A SPARQL 1.1 SELECT query. Declare needed prefixes, e.g.: "
-                  + "PREFIX cat: <" + NS_CAT + "> "
-                  + "PREFIX cus: <" + NS_CUS + "> "
-                  + "PREFIX inv: <" + NS_INV + "> "
-                  + "PREFIX ord: <" + NS_ORD + "> "
-                  + "PREFIX shp: <" + NS_SHP + ">"
-              )
-            ),
-            "required", List.of("sparql")
-          )
-        )
+        "required", List.of("sparql")
       )
-    );
-  }
-
-  private static Map<String, String> getOntologyProperty(String property) {
-    return Map.of("ontology", ONT_BASE, "property", property);
-  }
-
-  private static Map<String, String> getOntologyResult(String operatesOn, String returns) {
-    return Map.of("ontology", ONT_BASE, "operatesOn", operatesOn, "returns", returns);
+    ));
+    return Map.of("tools", tools);
   }
 
   public Object call(String name, JsonNode args) {

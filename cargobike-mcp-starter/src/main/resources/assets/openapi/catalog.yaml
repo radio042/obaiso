@@ -25,6 +25,26 @@ paths:
                       oneOf:
                         - $ref: '#/components/schemas/CargoBike'
                         - $ref: '#/components/schemas/EbikeCargoBike'
+  /api/catalog/cargo-bikes/{sku}:
+    get:
+      summary: Get cargo bike by SKU
+      operationId: getBikeBySku
+      parameters:
+        - in: path
+          name: sku
+          required: true
+          schema: { type: string }
+          x-jsonld-context:
+            sku: https://example.com/ont/cargobike/catalog#hasSku
+      responses:
+        "200":
+          description: OK
+          content:
+            application/ld+json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/CargoBike'
+                  - $ref: '#/components/schemas/EbikeCargoBike'
 components:
   schemas:
     CargoBike:

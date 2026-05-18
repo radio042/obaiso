@@ -164,25 +164,28 @@ Assistant: Here are the details for customer **BLUBB-123**:
 Let me know if there's anything else you'd like to know about this customer!
 
 You: Give me all orders from BLUBB-123
+  [tool] listOrders({})
   [tool] getCustomer({"customerId": "BLUBB-123"})
 
   ┌─ Reasoning trace ────────────────────────────────────
-  │  Intent   : Retrieve details about the customer with ID BLUBB-123.
-  │  Concepts : cus:Customer, cus:customerId, cus:fullName, cus:email, cus:hasAddress, cus:Address, cus:street, cus:city, cus:postalCode, cus:countryCode
-  │  Tool     : getCustomer — justified by cus:customerId — the user provided a value matching the pattern BLUBB-[0-9]+, which is the owl:hasKey of cus:Customer
+  │  Intent   : Retrieve all orders placed by customer BLUBB-123.
+  │  Concepts : cus:Customer, cus:customerId, ord:Order, ord:orderedBy, ord:orderId, ord:hasStatus, ord:hasTotalPrice, ord:hasItem
+  │  Tool     : getCustomer — justified by cus:customerId — verifies the customer identity behind BLUBB-123
+  │  Tool     : listOrders — justified by ord:orderedBy — fetches all orders and filters by the customer's cus:customerId
   └──────────────────────────────────────────────────────
 
-Assistant: Here are the details for customer **BLUBB-123**:
+Assistant: Here are all orders for customer **Alex Müller** (BLUBB-123):
 
-| Field | Value |
-|---|---|
-| **Name** | Alex Müller |
-| **Email** | alex@example.com |
-| **Street** | Hauptstraße 1 |
-| **City** | Nürnberg |
-| **Postal Code** | 90402 |
-| **Country** | DE (Germany) |
+| Order ID | Status | SKU | Qty | Unit Price | Total |
+|----------|--------|-----|-----|-----------|-------|
+| ORD-001 | PROCESSING | SKU-ECB-900 | 1 | €4,299.00 | €4,299.00 |
 
-Let me know if you need anything else for this customer!
+Alex currently has **1 order** on record:
+
+- **ORD-001** — Status: `PROCESSING`
+  - Item: SKU-ECB-900 × 1 @ €4,299.00
+  - **Total: €4,299.00 EUR**
+
+The other orders in the system (ORD-002, ORD-003) belong to different customers and are not associated with BLUBB-123.
 
 You: quit

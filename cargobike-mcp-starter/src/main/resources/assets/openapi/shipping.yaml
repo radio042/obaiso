@@ -8,7 +8,7 @@ paths:
   /api/shipping/quote:
     post:
       summary: Get shipping quote
-      operationId: getShippingQuote
+      operationId: getShipmentQuote
       requestBody:
         required: true
         content:

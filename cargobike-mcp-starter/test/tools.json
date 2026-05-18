@@ -2,173 +2,146 @@
   "tools": [
     {
       "name": "listCargoBikes",
+      "description": "List cargo bikes",
+      "x-openapi": {
+        "resourceUri": "classpath:assets/openapi/catalog.yaml",
+        "operationId": "listCargoBikes"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {}
-      },
-      "x-semantic": {
-        "ontology": "https://example.com/ont/cargobike#",
-        "operatesOn": "cb:CargoBike",
-        "returns": "cb:CargoBike"
-      }
-    },
-    {
-      "name": "listOrders",
-      "inputSchema": {
-        "type": "object",
-        "properties": {}
-      },
-      "x-semantic": {
-        "ontology": "https://example.com/ont/cargobike#",
-        "operatesOn": "cb:Order",
-        "returns": "cb:Order"
       }
     },
     {
       "name": "getBikeBySku",
+      "description": "Get cargo bike by SKU",
+      "x-openapi": {
+        "resourceUri": "classpath:assets/openapi/catalog.yaml",
+        "operationId": "getBikeBySku"
+      },
       "inputSchema": {
+        "type": "object",
         "properties": {
           "sku": {
-            "type": "string",
-            "x-semantic": {
-              "property": "cb:hasSku",
-              "ontology": "https://example.com/ont/cargobike#"
-            }
+            "type": "string"
           }
         },
-        "type": "object",
         "required": [
           "sku"
         ]
-      },
-      "x-semantic": {
-        "ontology": "https://example.com/ont/cargobike#",
-        "operatesOn": "cb:CargoBike",
-        "returns": "cb:CargoBike"
       }
     },
     {
       "name": "getCustomer",
+      "description": "Get customer by ID",
+      "x-openapi": {
+        "resourceUri": "classpath:assets/openapi/customers.yaml",
+        "operationId": "getCustomer"
+      },
       "inputSchema": {
+        "type": "object",
         "properties": {
           "customerId": {
-            "type": "string",
-            "x-semantic": {
-              "property": "cb:customerId",
-              "ontology": "https://example.com/ont/cargobike#"
-            }
+            "type": "string"
           }
         },
-        "type": "object",
         "required": [
           "customerId"
         ]
-      },
-      "x-semantic": {
-        "ontology": "https://example.com/ont/cargobike#",
-        "operatesOn": "cb:Customer",
-        "returns": "cb:Customer"
       }
     },
     {
       "name": "getInventoryBySku",
+      "description": "Get inventory for SKU",
+      "x-openapi": {
+        "resourceUri": "classpath:assets/openapi/inventory.yaml",
+        "operationId": "getInventoryBySku"
+      },
       "inputSchema": {
+        "type": "object",
         "properties": {
           "sku": {
-            "type": "string",
-            "x-semantic": {
-              "property": "cb:hasSku",
-              "ontology": "https://example.com/ont/cargobike#"
-            }
+            "type": "string"
           }
         },
-        "type": "object",
         "required": [
           "sku"
         ]
+      }
+    },
+    {
+      "name": "listOrders",
+      "description": "List all orders",
+      "x-openapi": {
+        "resourceUri": "classpath:assets/openapi/orders.yaml",
+        "operationId": "listOrders"
       },
-      "x-semantic": {
-        "ontology": "https://example.com/ont/cargobike#",
-        "operatesOn": "cb:CargoBike",
-        "returns": "cb:InventoryItem"
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
       }
     },
     {
       "name": "getOrder",
+      "description": "Get order by ID",
+      "x-openapi": {
+        "resourceUri": "classpath:assets/openapi/orders.yaml",
+        "operationId": "getOrder"
+      },
       "inputSchema": {
+        "type": "object",
         "properties": {
           "orderId": {
-            "type": "string",
-            "x-semantic": {
-              "property": "cb:orderId",
-              "ontology": "https://example.com/ont/cargobike#"
-            }
+            "type": "string"
           }
         },
-        "type": "object",
         "required": [
           "orderId"
         ]
-      },
-      "x-semantic": {
-        "ontology": "https://example.com/ont/cargobike#",
-        "operatesOn": "cb:Order",
-        "returns": "cb:Order"
       }
     },
     {
       "name": "getShipmentQuote",
+      "description": "Get shipping quote",
+      "x-openapi": {
+        "resourceUri": "classpath:assets/openapi/shipping.yaml",
+        "operationId": "getShipmentQuote"
+      },
       "inputSchema": {
+        "type": "object",
         "properties": {
           "postalCode": {
-            "type": "string",
-            "x-semantic": {
-              "property": "cb:postalCode",
-              "ontology": "https://example.com/ont/cargobike#"
-            }
+            "type": "string"
           },
           "countryCode": {
-            "type": "string",
-            "x-semantic": {
-              "property": "cb:countryCode",
-              "ontology": "https://example.com/ont/cargobike#"
-            }
+            "type": "string"
           },
           "weightKg": {
             "type": "number",
-            "x-semantic": {
-              "property": "cb:hasWeightKg",
-              "ontology": "https://example.com/ont/cargobike#"
-            }
+            "format": "float"
           }
         },
-        "type": "object",
         "required": [
           "postalCode",
           "weightKg"
         ]
-      },
-      "x-semantic": {
-        "ontology": "https://example.com/ont/cargobike#",
-        "operatesOn": "cb:Address",
-        "returns": "cb:ShipmentQuote"
       }
     },
     {
+      "description": "Execute a SPARQL SELECT query against the cargo bike domain ontology (Apache Jena, OWL-micro inference enabled). Use this to look up class hierarchies, discover applicable properties for a concept, and verify subclass/range inferences before choosing other tools. Available prefixes: cat: <https://example.com/ont/cargobike/catalog#>, cus: <https://example.com/ont/cargobike/customers#>, inv: <https://example.com/ont/cargobike/inventory#>, ord: <https://example.com/ont/cargobike/orders#>, shp: <https://example.com/ont/cargobike/shipping#>.",
       "name": "queryOntology",
       "inputSchema": {
-        "properties": {
-          "sparql": {
-            "type": "string",
-            "description": "A SPARQL 1.1 SELECT query. Use PREFIX cb: <https://example.com/ont/cargobike#> in the query."
-          }
-        },
         "type": "object",
         "required": [
           "sparql"
-        ]
-      },
-      "description": "Execute a SPARQL SELECT query against the cargo bike domain ontology (Apache Jena, OWL-micro inference enabled). Use this to look up class hierarchies, discover applicable properties for a concept, and verify subclass/range inferences before choosing other tools. The prefix cb: is bound to https://example.com/ont/cargobike#."
+        ],
+        "properties": {
+          "sparql": {
+            "description": "A SPARQL 1.1 SELECT query. Declare needed prefixes, e.g.: PREFIX cat: <https://example.com/ont/cargobike/catalog#> PREFIX cus: <https://example.com/ont/cargobike/customers#> PREFIX inv: <https://example.com/ont/cargobike/inventory#> PREFIX ord: <https://example.com/ont/cargobike/orders#> PREFIX shp: <https://example.com/ont/cargobike/shipping#>",
+            "type": "string"
+          }
+        }
+      }
     }
   ]
 }

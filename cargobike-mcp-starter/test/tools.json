@@ -2,22 +2,22 @@
   "tools": [
     {
       "name": "listCargoBikes",
-      "description": "List cargo bikes",
+      "description": "Call operation of API as specified by referenced OpenAPI specification",
       "x-openapi": {
-        "resourceUri": "classpath:assets/openapi/catalog.yaml",
-        "operationId": "listCargoBikes"
+        "operationId": "listCargoBikes",
+        "resourceUri": "classpath:assets/openapi/catalog.yaml"
       },
       "inputSchema": {
-        "type": "object",
-        "properties": {}
+        "properties": {},
+        "type": "object"
       }
     },
     {
       "name": "getBikeBySku",
-      "description": "Get cargo bike by SKU",
+      "description": "Call operation of API as specified by referenced OpenAPI specification",
       "x-openapi": {
-        "resourceUri": "classpath:assets/openapi/catalog.yaml",
-        "operationId": "getBikeBySku"
+        "operationId": "getBikeBySku",
+        "resourceUri": "classpath:assets/openapi/catalog.yaml"
       },
       "inputSchema": {
         "type": "object",
@@ -33,10 +33,10 @@
     },
     {
       "name": "getCustomer",
-      "description": "Get customer by ID",
+      "description": "Call operation of API as specified by referenced OpenAPI specification",
       "x-openapi": {
-        "resourceUri": "classpath:assets/openapi/customers.yaml",
-        "operationId": "getCustomer"
+        "operationId": "getCustomer",
+        "resourceUri": "classpath:assets/openapi/customers.yaml"
       },
       "inputSchema": {
         "type": "object",
@@ -52,10 +52,10 @@
     },
     {
       "name": "getInventoryBySku",
-      "description": "Get inventory for SKU",
+      "description": "Call operation of API as specified by referenced OpenAPI specification",
       "x-openapi": {
-        "resourceUri": "classpath:assets/openapi/inventory.yaml",
-        "operationId": "getInventoryBySku"
+        "operationId": "getInventoryBySku",
+        "resourceUri": "classpath:assets/openapi/inventory.yaml"
       },
       "inputSchema": {
         "type": "object",
@@ -71,22 +71,22 @@
     },
     {
       "name": "listOrders",
-      "description": "List all orders",
+      "description": "Call operation of API as specified by referenced OpenAPI specification",
       "x-openapi": {
-        "resourceUri": "classpath:assets/openapi/orders.yaml",
-        "operationId": "listOrders"
+        "operationId": "listOrders",
+        "resourceUri": "classpath:assets/openapi/orders.yaml"
       },
       "inputSchema": {
-        "type": "object",
-        "properties": {}
+        "properties": {},
+        "type": "object"
       }
     },
     {
       "name": "getOrder",
-      "description": "Get order by ID",
+      "description": "Call operation of API as specified by referenced OpenAPI specification",
       "x-openapi": {
-        "resourceUri": "classpath:assets/openapi/orders.yaml",
-        "operationId": "getOrder"
+        "operationId": "getOrder",
+        "resourceUri": "classpath:assets/openapi/orders.yaml"
       },
       "inputSchema": {
         "type": "object",
@@ -102,10 +102,10 @@
     },
     {
       "name": "getShipmentQuote",
-      "description": "Get shipping quote",
+      "description": "Call operation of API as specified by referenced OpenAPI specification",
       "x-openapi": {
-        "resourceUri": "classpath:assets/openapi/shipping.yaml",
-        "operationId": "getShipmentQuote"
+        "operationId": "getShipmentQuote",
+        "resourceUri": "classpath:assets/openapi/shipping.yaml"
       },
       "inputSchema": {
         "type": "object",
@@ -128,13 +128,13 @@
       }
     },
     {
-      "description": "Execute a SPARQL SELECT query against the cargo bike domain ontology (Apache Jena, OWL-micro inference enabled). Use this to look up class hierarchies, discover applicable properties for a concept, and verify subclass/range inferences before choosing other tools. Available prefixes: cat: <https://example.com/ont/cargobike/catalog#>, cus: <https://example.com/ont/cargobike/customers#>, inv: <https://example.com/ont/cargobike/inventory#>, ord: <https://example.com/ont/cargobike/orders#>, shp: <https://example.com/ont/cargobike/shipping#>.",
       "name": "queryOntology",
+      "description": "Execute a SPARQL SELECT query against the cargo bike domain ontology (Apache Jena, OWL-micro inference enabled). Use this to look up class hierarchies, discover applicable properties for a concept, and verify subclass/range inferences before choosing other tools. Available prefixes: cat: <https://example.com/ont/cargobike/catalog#>, cus: <https://example.com/ont/cargobike/customers#>, inv: <https://example.com/ont/cargobike/inventory#>, ord: <https://example.com/ont/cargobike/orders#>, shp: <https://example.com/ont/cargobike/shipping#>.",
       "inputSchema": {
-        "type": "object",
         "required": [
           "sparql"
         ],
+        "type": "object",
         "properties": {
           "sparql": {
             "description": "A SPARQL 1.1 SELECT query. Declare needed prefixes, e.g.: PREFIX cat: <https://example.com/ont/cargobike/catalog#> PREFIX cus: <https://example.com/ont/cargobike/customers#> PREFIX inv: <https://example.com/ont/cargobike/inventory#> PREFIX ord: <https://example.com/ont/cargobike/orders#> PREFIX shp: <https://example.com/ont/cargobike/shipping#>",

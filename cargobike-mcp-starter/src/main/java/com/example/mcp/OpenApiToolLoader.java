@@ -40,8 +40,7 @@ class OpenApiToolLoader {
 
                 Map<String, Object> tool = new LinkedHashMap<>();
                 tool.put("name", operationId);
-                String summary = op.path("summary").asText(null);
-                if (summary != null) tool.put("description", summary);
+                tool.put("description", "Call operation of API as specified by referenced OpenAPI specification");
                 tool.put("x-openapi", Map.of("resourceUri", resourceUri, "operationId", operationId));
                 tool.put("inputSchema", buildInputSchema(op, spec));
                 out.add(tool);

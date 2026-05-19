@@ -132,17 +132,16 @@ If no ontology inference was needed, set inferences_used to an empty list.
 def mcp_tool_to_claude(tool) -> dict:
     """Convert an MCP Tool object to the Anthropic API tool dict format.
 
-    Tool-level x-semantic annotations (operatesOn / returns) are appended to
-    the description so Claude can use them to justify tool selection formally.
+    Tool-level x-openapi annotations are appended to
+    the description so Claude can use them to look up details.
     """
     description = tool.description or ""
-    sem = (tool.model_extra or {}).get("x-semantic") if hasattr(tool, "model_extra") else None
-    if sem:
-        description += (
-            f"\n[x-semantic: ontology={sem.get('ontology', '')},"
-            f" operatesOn={sem.get('operatesOn', '')},"
-            f" returns={sem.get('returns', '')}]"
-        )
+    extra = getattr(tool, "model_extra", None) or {}
+    ref = extra.get("x-openapi") if isinstance(extra, dict) else None
+    if isinstance(ref, dict):
+        description = (
+            description + f"\n[OpenAPI: {ref['resourceUri']}, operationId={ref['operationId']}]"
+        ).strip()
     return {
         "name": tool.name,
         "description": description,

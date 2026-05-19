@@ -3,7 +3,7 @@
 This starter repo demonstrates **ontology-backed API documentation** for an e-commerce site selling cargo bikes. It
 includes:
 
-- **OpenAPI 3.1** specs (one per microservice) annotated with `x-semantic`
+- **OpenAPI 3.1** specs (one per microservice) annotated with `x-jsonld-type` and `x-jsonld-context` extensions according to the [IETF Internet-Draft for REST API Linked Data Keywords](https://datatracker.ietf.org/doc/draft-polli-restapi-ld-keywords/) including proposed [extension to OpenAPI Parameter Objects](https://github.com/ioggstream/draft-polli-restapi-ld-keywords/issues/46).
 - **RDFS ontology** (Turtle) for core cargo bike concepts
 - **Minimal Quarkus command-mode app** acting as a simple **MCP-like JSON-RPC server over stdio**
 

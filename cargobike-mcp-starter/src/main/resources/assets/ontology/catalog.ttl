@@ -3,7 +3,7 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
-@prefix dbo:  <http://dbpedia.org/ontology/> .
+@prefix dbr:  <http://dbpedia.org/resource/> .
 @prefix owl:  <http://www.w3.org/2002/07/owl#> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix wd:   <http://www.wikidata.org/entity/> .
@@ -18,7 +18,7 @@
 ###########
 
 cat:CargoBike a rdfs:Class ;
-  rdfs:subClassOf dbo:Bicycle ;
+  rdfs:subClassOf dbr:Bicycle ;
   rdfs:subClassOf gr:ProductOrServiceModel ;
   skos:broadMatch wd:Q11442 ;
   owl:hasKey (cat:hasSku) ;

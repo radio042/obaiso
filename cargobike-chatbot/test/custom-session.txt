@@ -1,18 +1,24 @@
-Cargo Bike Assistant
+C:\Projects\BVA\devon25\workspaces\main\obaiso\.venv\Scripts\python.exe C:\Projects\BVA\devon25\workspaces\main\obaiso\cargobike-chatbot\custom-chatbot.py
+Cargo Bike Assistant (Powered by Generative Engine)
+Using model: anthropic.claude-sonnet-4-6
+Endpoint: https://openai.generative.engine.capgemini.com/v1
+
 Type your question, or 'quit' to exit.
 
 You: What bikes do You have?
+  [tool] loadResource({"resourceUri": "classpath:assets/openapi/catalog.yaml"})
   [tool] listCargoBikes({})
 
   ┌─ Reasoning trace ────────────────────────────────────
   │  Intent   : What bikes do You have?
-  │  Concepts : https://example.com/ont/cargobike, cat:CargoBike
-  │  Inferred : cat:CargoBike rdfs:subClassOf dbo:Bicycle
+  │  Concepts : classpath:assets/openapi/catalog.yaml, listCargoBikes
+  │  Inferred : cat:CargoBike rdfs:subClassOf dbr:Bicycle
   │  Inferred : cat:EbikeCargoBike rdfs:subClassOf cat:CargoBike
-  │  Tool     : listCargoBikes — justified by https://example.com/ont/cargobike — tool operatesOn cat:CargoBike, returns cat:CargoBike
+  │  Tool     : loadResource — justified by None
+  │  Tool     : listCargoBikes — justified by classpath:assets/openapi/catalog.yaml — operationId=listCargoBikes
   └──────────────────────────────────────────────────────
 
-Assistant: Here's our current cargo bike lineup! 🚲
+Assistant: Here's our current lineup of cargo bikes! 🚲
 
 ---
 
@@ -22,7 +28,7 @@ Assistant: Here's our current cargo bike lineup! 🚲
 | **SKU** | SKU-CB-001 |
 | **Type** | Cargo Bike |
 | **Wheels** | 2 |
-| **Bike Weight** | 38.5 kg |
+| **Weight** | 38.5 kg |
 | **Max Payload** | 200 kg |
 
 ---
@@ -33,7 +39,7 @@ Assistant: Here's our current cargo bike lineup! 🚲
 | **SKU** | SKU-ECB-900 |
 | **Type** | E-Cargo Bike (Electric) |
 | **Wheels** | 3 |
-| **Bike Weight** | 42.0 kg |
+| **Weight** | 42.0 kg |
 | **Max Payload** | 220 kg |
 | **Battery Capacity** | 750 Wh |
 
@@ -45,167 +51,276 @@ Assistant: Here's our current cargo bike lineup! 🚲
 | **SKU** | SKU-CB-002 |
 | **Type** | Cargo Bike |
 | **Wheels** | 2 |
-| **Bike Weight** | 34.0 kg |
+| **Weight** | 34.0 kg |
 | **Max Payload** | 150 kg |
 
 ---
 
-We offer **two classic cargo bikes** and **one electric cargo bike**. The **E-Cargo Pro** is our most capable model with the highest payload (220 kg) and electric assist, while the **UrbanHauler 300** is the lightest option. Would you like more details on any of these, such as availability or shipping costs?
+We have **3 bikes** in total:
+- **2 classic cargo bikes** (CargoMaster 500 & UrbanHauler 300) — great for everyday hauling.
+- **1 electric cargo bike** (E-Cargo Pro) — with electric assist and a powerful 750 Wh battery, perfect for heavier loads or longer distances.
+
+Would you like more details on any specific model, availability, or shipping information? 😊
+
+> **Reasoning:**
+> - Mapped concept: `cat:CargoBike` → `listCargoBikes`
+> - Mapped concept: `cat:EbikeCargoBike` (subclass of `cat:CargoBike`)
+> - Inferences used: [`https://example.com/ont/cargobike/catalog#EbikeCargoBike rdfs:subClassOf https://example.com/ont/cargobike/catalog#CargoBike`]
 
 You: How many E-Cargo Pros are in stock?
+  [tool] queryOntology({"sparql": "\nPREFIX cat: <https://example.com/ont/cargobike/catalog#>\nPREFIX inv: <https://example.com/ont/cargobike/inventory#>\nSELECT ?class ?label WHERE {\n  ?class rdfs:subClassOf* cat:CargoBike .\n  OPTIONAL { ?class rdfs:label ?label }\n}\n"})
+  [tool] loadResource({"resourceUri": "classpath:assets/openapi/catalog.yaml"})
+  [tool] loadResource({"resourceUri": "classpath:assets/openapi/inventory.yaml"})
   [tool] listCargoBikes({})
-  [tool] queryOntology({"sparql": "\nPREFIX cat: <https://example.com/ont/cargobike/catalog#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nSELECT ?class ?label WHERE {\n  ?class rdfs:subClassOf* cat:CargoBike ;\n         rdfs:label ?label .\n}\n"})
   [tool] getInventoryBySku({"sku": "SKU-ECB-900"})
 
   ┌─ Reasoning trace ────────────────────────────────────
   │  Intent   : How many E-Cargo Pros are in stock?
-  │  Concepts : https://example.com/ont/cargobike, cat:CargoBike, inv:InventoryItem
-  │  Inferred : cat:CargoBike rdfs:subClassOf dbo:Bicycle
+  │  Concepts : classpath:assets/openapi/catalog.yaml, listCargoBikes, classpath:assets/openapi/inventory.yaml, getInventoryBySku
+  │  Inferred : cat:CargoBike rdfs:subClassOf dbr:Bicycle
   │  Inferred : cat:EbikeCargoBike rdfs:subClassOf cat:CargoBike
-  │  Tool     : listCargoBikes — justified by https://example.com/ont/cargobike — tool operatesOn cat:CargoBike, returns cat:CargoBike
   │  Tool     : queryOntology — justified by None
-  │  Tool     : getInventoryBySku — justified by https://example.com/ont/cargobike — tool operatesOn cat:CargoBike, returns inv:InventoryItem
+  │  Tool     : loadResource — justified by None
+  │  Tool     : loadResource — justified by None
+  │  Tool     : listCargoBikes — justified by classpath:assets/openapi/catalog.yaml — operationId=listCargoBikes
+  │  Tool     : getInventoryBySku — justified by classpath:assets/openapi/inventory.yaml — operationId=getInventoryBySku
   └──────────────────────────────────────────────────────
 
 Assistant: There are **3 E-Cargo Pros** currently in stock, held at warehouse **NUE-01**.
 
-Here's a quick summary:
-| Model | SKU | Type | In Stock | Warehouse |
-|---|---|---|---|---|
-| E-Cargo Pro | SKU-ECB-900 | E-Cargo Bike | **3** | NUE-01 |
+---
 
-Let me know if you'd like to place an order or need any other details! 🚲⚡
+<details>
+<summary>🔍 Reasoning</summary>
+
+**Mapped concepts:**
+- `https://example.com/ont/cargobike/catalog#EbikeCargoBike` — the E-Cargo Pro is an e-cargo bike model
+- `https://example.com/ont/cargobike/catalog#hasSku` — used to identify the bike (`SKU-ECB-900`)
+- `https://example.com/ont/cargobike/catalog#modelName` — matched "E-Cargo Pro" from the catalog
+- `https://example.com/ont/cargobike/inventory#InventoryItem` — stock record for the SKU
+- `https://example.com/ont/cargobike/inventory#hasQuantity` — the stock count (3)
+
+**Inferences used:**
+- `https://example.com/ont/cargobike/catalog#EbikeCargoBike` `rdfs:subClassOf` `https://example.com/ont/cargobike/catalog#CargoBike` — confirmed the E-Cargo Pro appears in the general bike listing via `listCargoBikes`
+
+</details>
 
 You: What's the status of ORD-1001?
+  [tool] loadResource({"resourceUri": "classpath:assets/openapi/orders.yaml"})
   [tool] getOrder({"orderId": "ORD-1001"})
 
   ┌─ Reasoning trace ────────────────────────────────────
   │  Intent   : What's the status of ORD-1001?
-  │  Concepts : https://example.com/ont/cargobike, ord:Order
-  │  Tool     : getOrder — justified by https://example.com/ont/cargobike — tool operatesOn ord:Order, returns ord:Order
+  │  Concepts : classpath:assets/openapi/orders.yaml, getOrder
+  │  Tool     : loadResource — justified by None
+  │  Tool     : getOrder — justified by classpath:assets/openapi/orders.yaml — operationId=getOrder
   └──────────────────────────────────────────────────────
 
-Assistant: It looks like no order was found with the ID **ORD-1001**. This could mean:
+Assistant: It looks like **no order was found** with the ID **ORD-1001**. This could mean:
 
-- The order ID might be incorrect or mistyped.
-- The order may not exist in our system.
+- The order ID might be incorrect — please double-check the order number.
+- The order may not exist in the system yet.
 
-Could you double-check the order ID and try again? Order IDs follow the format **ORD-** followed by numbers (e.g., `ORD-1234`). If you have a different order number, I'm happy to look it up for you!
+Could you verify the order ID and try again? If you have a different order number or a customer ID, I'd be happy to help look it up! 😊
+
+---
+
+> **Reasoning:**
+> - **Mapped concepts:** `ord:Order` · `ord:orderId` · `ord:hasStatus`
+> - **Tool used:** `getOrder` (operationId from `orders.yaml`, path `/api/orders/{orderId}`)
+> - **Inferences used:** *(none)*
 
 You: What's the status of ORD-002?
+  [tool] loadResource({"resourceUri": "classpath:assets/openapi/orders.yaml"})
   [tool] getOrder({"orderId": "ORD-002"})
 
   ┌─ Reasoning trace ────────────────────────────────────
   │  Intent   : What's the status of ORD-002?
-  │  Concepts : https://example.com/ont/cargobike, ord:Order
-  │  Tool     : getOrder — justified by https://example.com/ont/cargobike — tool operatesOn ord:Order, returns ord:Order
+  │  Concepts : classpath:assets/openapi/orders.yaml, getOrder
+  │  Tool     : loadResource — justified by None
+  │  Tool     : getOrder — justified by classpath:assets/openapi/orders.yaml — operationId=getOrder
   └──────────────────────────────────────────────────────
 
-Assistant: Here's the current status of order **ORD-002**:
+Assistant: Here's the status and summary for **ORD-002**:
 
-- **Status:** ✅ SHIPPED
-- **Ordered by:** maria@example.com (Customer ID: BLUBB-456)
-- **Items:** 2× SKU-CB-001 @ €1,899.00 each
-- **Total Price:** €3,798.00
+| Field | Details |
+|---|---|
+| **Order ID** | ORD-002 |
+| **Status** | ✅ **SHIPPED** |
+| **Customer** | maria@example.com (BLUBB-456) |
+| **Item** | SKU-CB-001 × 2 |
+| **Unit Price** | €1,899.00 |
+| **Total Price** | €3,798.00 |
 
-The order has already been shipped! Is there anything else you'd like to know?
+Order **ORD-002** has been **shipped**! 🚚
+
+---
+
+<details>
+<summary>🔍 Reasoning</summary>
+
+**Mapped concepts:**
+- `ord:Order` → `https://example.com/ont/cargobike/orders#Order`
+- `ord:orderId` → `https://example.com/ont/cargobike/orders#orderId`
+- `ord:hasStatus` → `https://example.com/ont/cargobike/orders#hasStatus`
+- `ord:hasTotalPrice` → `https://example.com/ont/cargobike/orders#hasTotalPrice`
+- `ord:orderedBy` → `https://example.com/ont/cargobike/orders#orderedBy`
+
+**Inferences used:** []
+
+</details>
 
 You: How much does it cost to ship 34 kg to 80331?
+  [tool] loadResource({"resourceUri": "classpath:assets/openapi/shipping.yaml"})
   [tool] getShipmentQuote({"postalCode": "80331", "weightKg": 34})
 
   ┌─ Reasoning trace ────────────────────────────────────
   │  Intent   : How much does it cost to ship 34 kg to 80331?
-  │  Concepts : https://example.com/ont/cargobike, cus:Address, shp:ShipmentQuote
-  │  Tool     : getShipmentQuote — justified by https://example.com/ont/cargobike — tool operatesOn cus:Address, returns shp:ShipmentQuote
+  │  Concepts : classpath:assets/openapi/shipping.yaml, getShipmentQuote
+  │  Tool     : loadResource — justified by None
+  │  Tool     : getShipmentQuote — justified by classpath:assets/openapi/shipping.yaml — operationId=getShipmentQuote
   └──────────────────────────────────────────────────────
 
-Assistant: Here's your shipping quote:
+Assistant: Here's the shipping quote for your shipment:
 
 | Detail | Value |
 |---|---|
 | 📦 Weight | 34 kg |
-| 📍 Postal Code | 80331 (Germany) |
+| 📮 Postal Code | 80331 (DE) |
 | 💶 Shipping Cost | **€66.70** |
-| 🚚 Estimated Delivery | **3 days** |
+| 🚚 Estimated Delivery | **3 business days** |
 
-So shipping a 34 kg package to postal code 80331 (Munich, DE) would cost **€66.70** with an estimated delivery time of **3 business days**.
+---
+
+<details>
+<summary>🔍 Reasoning</summary>
+
+**Mapped Concepts:**
+- `cat:hasWeightKg` — weight of the shipment
+- `cus:postalCode` — destination postal code
+- `cus:countryCode` — inferred as DE from postal code 80331
+- `shp:ShipmentQuote` — the result returned by the shipping service
+- `ord:hasTotalPrice` / `ord:amount` / `ord:currency` — price details
+- `shp:estimatedDays` — estimated delivery time
+
+**Inferences Used:**
+- `shp:shipsTo` (range: `cus:Address`) connects the quote to the destination address
+
+</details>
 
 You: How much does it cost to ship SKU-CB-002 to 80331?
   [tool] getBikeBySku({"sku": "SKU-CB-002"})
-  [tool] getShipmentQuote({"postalCode": "80331", "weightKg": 34})
+  [tool] loadResource({"resourceUri": "classpath:assets/openapi/shipping.yaml"})
+  [tool] getShipmentQuote({"postalCode": "80331", "weightKg": 34.0})
 
   ┌─ Reasoning trace ────────────────────────────────────
   │  Intent   : How much does it cost to ship SKU-CB-002 to 80331?
-  │  Concepts : https://example.com/ont/cargobike, cat:CargoBike, cus:Address, shp:ShipmentQuote
-  │  Inferred : cat:CargoBike rdfs:subClassOf dbo:Bicycle
-  │  Inferred : cat:EbikeCargoBike rdfs:subClassOf cat:CargoBike
-  │  Tool     : getBikeBySku — justified by https://example.com/ont/cargobike — tool operatesOn cat:CargoBike, returns cat:CargoBike
-  │  Tool     : getShipmentQuote — justified by https://example.com/ont/cargobike — tool operatesOn cus:Address, returns shp:ShipmentQuote
+  │  Concepts : classpath:assets/openapi/catalog.yaml, getBikeBySku, classpath:assets/openapi/shipping.yaml, getShipmentQuote
+  │  Tool     : getBikeBySku — justified by classpath:assets/openapi/catalog.yaml — operationId=getBikeBySku
+  │  Tool     : loadResource — justified by None
+  │  Tool     : getShipmentQuote — justified by classpath:assets/openapi/shipping.yaml — operationId=getShipmentQuote
   └──────────────────────────────────────────────────────
 
-Assistant: Here's the shipping summary for the **UrbanHauler 300 (SKU-CB-002)** to postal code **80331 (Munich, DE)**:
+Assistant: Here's the shipping quote for the **UrbanHauler 300 (SKU-CB-002)** to postal code **80331 (Munich, DE)**:
 
 | Detail | Value |
 |---|---|
-| 🚲 Model | UrbanHauler 300 |
-| ⚖️ Weight | 34 kg |
-| 💶 Shipping Cost | **€66.70** |
-| 🗓️ Estimated Delivery | **3 business days** |
-| 📦 Destination | 80331, Germany |
+| 🚲 **Bike** | UrbanHauler 300 |
+| ⚖️ **Weight** | 34.0 kg |
+| 💶 **Shipping Cost** | **€66.70** |
+| 📦 **Estimated Delivery** | 3 business days |
 
-The shipping cost is **€66.70**, with an estimated delivery time of **3 days**. Let me know if you'd like to place an order!
+---
+
+<details>
+<summary>🔍 Reasoning</summary>
+
+**Mapped Concepts:**
+- `cat:CargoBike` — the bike model identified by `cat:hasSku` = `SKU-CB-002`
+- `cat:hasWeightKg` — used as the `weightKg` input for the shipment quote
+- `cus:postalCode` — postal code `80331` used as destination
+- `shp:ShipmentQuote` — the result type returned by the shipping service
+- `ord:hasTotalPrice` / `ord:amount` / `ord:currency` — the cost structure in the response
+- `shp:estimatedDays` — delivery lead time
+
+**Inferences Used:**
+- None (no subclass inference required; `cat:CargoBike` matched directly)
+
+</details>
 
 You: Are there orders for bikes out of stock?
+  [tool] loadResource({"resourceUri": "classpath:assets/openapi/orders.yaml"})
+  [tool] loadResource({"resourceUri": "classpath:assets/openapi/inventory.yaml"})
+  [tool] queryOntology({"sparql": "\nPREFIX ord: <https://example.com/ont/cargobike/orders#>\nPREFIX inv: <https://example.com/ont/cargobike/inventory#>\nPREFIX cat: <https://example.com/ont/cargobike/catalog#>\nSELECT ?class ?label WHERE {\n  { ord:Order rdfs:label ?label . BIND(ord:Order AS ?class) }\n  UNION\n  { inv:InventoryItem rdfs:label ?label . BIND(inv:InventoryItem AS ?class) }\n  UNION\n  { ord:OrderItem rdfs:label ?label . BIND(ord:OrderItem AS ?class) }\n}\n"})
   [tool] listOrders({})
-  [tool] listCargoBikes({})
   [tool] getInventoryBySku({"sku": "SKU-ECB-900"})
   [tool] getInventoryBySku({"sku": "SKU-CB-001"})
   [tool] getInventoryBySku({"sku": "SKU-CB-002"})
 
   ┌─ Reasoning trace ────────────────────────────────────
   │  Intent   : Are there orders for bikes out of stock?
-  │  Concepts : https://example.com/ont/cargobike, ord:Order, cat:CargoBike, inv:InventoryItem
-  │  Inferred : cat:CargoBike rdfs:subClassOf dbo:Bicycle
-  │  Inferred : cat:EbikeCargoBike rdfs:subClassOf cat:CargoBike
-  │  Tool     : listOrders — justified by https://example.com/ont/cargobike — tool operatesOn ord:Order, returns ord:Order
-  │  Tool     : listCargoBikes — justified by https://example.com/ont/cargobike — tool operatesOn cat:CargoBike, returns cat:CargoBike
-  │  Tool     : getInventoryBySku — justified by https://example.com/ont/cargobike — tool operatesOn cat:CargoBike, returns inv:InventoryItem
-  │  Tool     : getInventoryBySku — justified by https://example.com/ont/cargobike — tool operatesOn cat:CargoBike, returns inv:InventoryItem
-  │  Tool     : getInventoryBySku — justified by https://example.com/ont/cargobike — tool operatesOn cat:CargoBike, returns inv:InventoryItem
+  │  Concepts : classpath:assets/openapi/orders.yaml, listOrders, classpath:assets/openapi/inventory.yaml, getInventoryBySku
+  │  Tool     : loadResource — justified by None
+  │  Tool     : loadResource — justified by None
+  │  Tool     : queryOntology — justified by None
+  │  Tool     : listOrders — justified by classpath:assets/openapi/orders.yaml — operationId=listOrders
+  │  Tool     : getInventoryBySku — justified by classpath:assets/openapi/inventory.yaml — operationId=getInventoryBySku
+  │  Tool     : getInventoryBySku — justified by classpath:assets/openapi/inventory.yaml — operationId=getInventoryBySku
+  │  Tool     : getInventoryBySku — justified by classpath:assets/openapi/inventory.yaml — operationId=getInventoryBySku
   └──────────────────────────────────────────────────────
 
-Assistant: Yes! There is **one order for a bike that is currently out of stock**:
+Assistant: I have all the data needed. Here's the full picture:
 
-| Field | Details |
-|---|---|
-| **Order ID** | ORD-003 |
-| **Status** | PAID |
-| **Customer** | lars@example.com (BLUBB-789) |
-| **Bike Model** | UrbanHauler 300 |
-| **SKU** | SKU-CB-002 |
-| **Quantity Ordered** | 1 |
-| **Total Price** | €1,499.00 |
-| **Stock Available** | **0 units** (Warehouse NUE-01) |
+---
 
-⚠️ **ORD-003 is PAID but the UrbanHauler 300 (SKU-CB-002) has zero units in stock.** This order cannot be fulfilled without restocking. You may want to contact the customer (lars@example.com) proactively and initiate a replenishment order.
+## 🚨 Yes — There is 1 Order for an Out-of-Stock Bike
 
-The other two orders are fine:
-- **ORD-001** – E-Cargo Pro (SKU-ECB-900): 3 in stock ✅
-- **ORD-002** – CargoMaster 500 (SKU-CB-001): 7 in stock ✅
+| Order | Status | Customer | SKU | Qty Ordered | Stock |
+|-------|--------|----------|-----|-------------|-------|
+| ORD-001 | PROCESSING | alex@example.com (BLUBB-123) | SKU-ECB-900 | 1 | ✅ 3 |
+| ORD-002 | SHIPPED | maria@example.com (BLUBB-456) | SKU-CB-001 | 2 | ✅ 7 |
+| **ORD-003** | **PAID** | **lars@example.com (BLUBB-789)** | **SKU-CB-002** | **1** | **❌ 0** |
+
+### ⚠️ Problem: ORD-003
+- **Order ID:** ORD-003
+- **Status:** PAID
+- **Item:** SKU-CB-002 (qty: 1), priced at €1,499.00
+- **Stock available:** **0 units** in warehouse NUE-01
+
+This order has been paid but the SKU-CB-002 bike is completely out of stock. Immediate action is recommended — either restocking, substituting the product, or notifying the customer (lars@example.com).
+
+---
+
+<details>
+<summary>🔍 Reasoning</summary>
+
+**Mapped concepts:**
+- `ord:Order` — orders retrieved via `listOrders`
+- `ord:OrderItem` — line items within each order, carrying `cat:hasSku`
+- `ord:hasStatus` — used to surface urgency (PAID but unfulfillable)
+- `inv:InventoryItem` — stock levels checked via `getInventoryBySku`
+- `inv:hasQuantity` — quantity = 0 signals out-of-stock
+
+**Inferences used:**
+- `cat:hasSku` links `ord:OrderItem` to `inv:InventoryItem` (shared SKU key across ontologies, as `inv` imports `cat`)
+
+</details>
 
 You: Give me details about BLUBB-123
+  [tool] loadResource({"resourceUri": "classpath:assets/openapi/customers.yaml"})
   [tool] getCustomer({"customerId": "BLUBB-123"})
 
   ┌─ Reasoning trace ────────────────────────────────────
   │  Intent   : Give me details about BLUBB-123
-  │  Concepts : https://example.com/ont/cargobike, cus:Customer
+  │  Concepts : classpath:assets/openapi/customers.yaml, getCustomer
   │  Inferred : cus:Customer rdfs:subClassOf gr:BusinessEntity
-  │  Tool     : getCustomer — justified by https://example.com/ont/cargobike — tool operatesOn cus:Customer, returns cus:Customer
+  │  Tool     : loadResource — justified by None
+  │  Tool     : getCustomer — justified by classpath:assets/openapi/customers.yaml — operationId=getCustomer
   └──────────────────────────────────────────────────────
 
 Assistant: Here are the details for customer **BLUBB-123**:
 
-| Field | Details |
+| Field | Value |
 |---|---|
 | **Customer ID** | BLUBB-123 |
 | **Full Name** | Alex Müller |
@@ -215,51 +330,79 @@ Assistant: Here are the details for customer **BLUBB-123**:
 | **Postal Code** | 90402 |
 | **Country** | DE (Germany) |
 
-Is there anything else you'd like to know about this customer, such as their orders?
+---
+
+<details>
+<summary>🔍 Reasoning</summary>
+
+**Mapped Concepts:**
+- `https://example.com/ont/cargobike/customers#Customer` — the resource type retrieved
+- `https://example.com/ont/cargobike/customers#customerId` — used to identify the customer via `BLUBB-123`
+- `https://example.com/ont/cargobike/customers#fullName` — customer's full name
+- `https://example.com/ont/cargobike/customers#email` — customer's email address
+- `https://example.com/ont/cargobike/customers#hasAddress` — links customer to their address
+- `https://example.com/ont/cargobike/customers#Address` — the address resource
+- `https://example.com/ont/cargobike/customers#street` — street field
+- `https://example.com/ont/cargobike/customers#city` — city field
+- `https://example.com/ont/cargobike/customers#postalCode` — postal code field
+- `https://example.com/ont/cargobike/customers#countryCode` — country code field
+
+**Inferences used:** *(none)*
+
+</details>
 
 You: Give me all orders from BLUBB-123
-
+  [tool] loadResource({"resourceUri": "classpath:assets/openapi/orders.yaml"})
+  [tool] loadResource({"resourceUri": "classpath:assets/openapi/customers.yaml"})
   [tool] getCustomer({"customerId": "BLUBB-123"})
   [tool] listOrders({})
 
   ┌─ Reasoning trace ────────────────────────────────────
   │  Intent   : Give me all orders from BLUBB-123
-  │  Concepts : https://example.com/ont/cargobike, cus:Customer, ord:Order
+  │  Concepts : classpath:assets/openapi/customers.yaml, getCustomer, classpath:assets/openapi/orders.yaml, listOrders
   │  Inferred : cus:Customer rdfs:subClassOf gr:BusinessEntity
-  │  Tool     : getCustomer — justified by https://example.com/ont/cargobike — tool operatesOn cus:Customer, returns cus:Customer
-  │  Tool     : listOrders — justified by https://example.com/ont/cargobike — tool operatesOn ord:Order, returns ord:Order
+  │  Tool     : loadResource — justified by None
+  │  Tool     : loadResource — justified by None
+  │  Tool     : getCustomer — justified by classpath:assets/openapi/customers.yaml — operationId=getCustomer
+  │  Tool     : listOrders — justified by classpath:assets/openapi/orders.yaml — operationId=listOrders
   └──────────────────────────────────────────────────────
 
-Assistant: Here are all the details for customer **Alex Müller** (BLUBB-123):
+Assistant: Here are all orders placed by customer **Alex Müller** (`BLUBB-123`):
 
 ---
 
-### 👤 Customer
-| Field | Value |
-|---|---|
-| **Name** | Alex Müller |
-| **Email** | alex@example.com |
-| **Address** | Hauptstraße 1, 90402 Nürnberg, DE |
+### 📦 Order: ORD-001
+| Field        | Value              |
+|--------------|--------------------|
+| **Status**   | 🔄 PROCESSING      |
+| **Item**     | SKU-ECB-900 × 1   |
+| **Unit Price** | 4,299.00 EUR     |
+| **Total**    | **4,299.00 EUR**   |
 
 ---
 
-### 📦 Orders
-
-After filtering all orders for BLUBB-123, Alex has **1 order**:
-
-| Field | Value |
-|---|---|
-| **Order ID** | ORD-001 |
-| **Status** | 🔄 PROCESSING |
-| **SKU** | SKU-ECB-900 |
-| **Quantity** | 1 |
-| **Unit Price** | €4,299.00 |
-| **Total Price** | €4,299.00 |
+> ℹ️ That's the only order found for `BLUBB-123`. The other orders in the system (ORD-002, ORD-003) belong to different customers.
 
 ---
 
-Alex currently has one active order for a single e-cargo bike (SKU-ECB-900) which is currently being processed. Let me know if you need any further details!
+<details>
+<summary>🧠 Reasoning</summary>
+
+**Mapped concepts:**
+- `cus:Customer` — `BLUBB-123` identified as a `cus:Customer` via `cus:customerId`
+- `ord:Order` — orders retrieved via `listOrders`, filtered by `ord:orderedBy` → `cus:customerId = BLUBB-123`
+- `ord:hasStatus` — order lifecycle status
+- `ord:hasItem` / `ord:OrderItem` — line items with `cat:hasSku` and `ord:quantity`
+- `ord:hasTotalPrice` / `ord:Price` — total price with `ord:amount` and `ord:currency`
+
+**Inferences used:**
+- `ord:orderedBy` range is `cus:Customer` (URI: `https://example.com/ont/cargobike/orders#orderedBy`)
+- `cus:customerId` pattern constraint: `BLUBB-[0-9]+` (URI: `https://example.com/ont/cargobike/customers#customerId`)
+
+</details>
 
 You: Bye!
 
-Process finished with exit code 0
+Assistant: Goodbye! 👋 Feel free to come back anytime if you have questions about our cargo bikes, orders, or anything else. Have a great day! 🚲
+
+You:

@@ -8,6 +8,7 @@ import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFNode;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
@@ -41,6 +42,8 @@ public class ToolsRegistry {
     }
     return m;
   }
+
+  private static final ResourcesRegistry RESOURCES = new ResourcesRegistry();
 
   private static final List<Map<String, Object>> CATALOG = List.of(
     Map.of(
@@ -147,6 +150,22 @@ public class ToolsRegistry {
 
   public Map<String, Object> list() {
     List<Map<String, Object>> tools = new ArrayList<>(OpenApiToolLoader.loadAll());
+    tools.add(Map.of(
+      "name", "loadResource",
+      "description", "Load the full OpenAPI specification for a resource URI. Use this to inspect "
+        + "the API contract (paths, schemas, parameters) referenced by other tools via their x-openapi "
+        + "attribute before choosing a tool. The resourceUri value is taken from x-openapi.resourceUri.",
+      "inputSchema", Map.of(
+        "type", "object",
+        "properties", Map.of(
+          "resourceUri", Map.of(
+            "type", "string",
+            "description", "The resource URI, e.g. classpath:assets/openapi/catalog.yaml"
+          )
+        ),
+        "required", List.of("resourceUri")
+      )
+    ));
     tools.add(Map.of(
       "name", "queryOntology",
       "description", "Execute a SPARQL SELECT query against the cargo bike domain ontology "
@@ -255,6 +274,17 @@ public class ToolsRegistry {
           "ord:hasTotalPrice", Map.of("@type", "ord:Price", "ord:amount", round(price), "ord:currency", "EUR"),
           "shp:estimatedDays", 3
         );
+      }
+      case "loadResource" -> {
+        String resourceUri = args.path("resourceUri").asText();
+        try {
+          String path = resourceUri.startsWith("classpath:")
+              ? resourceUri.substring("classpath:".length())
+              : resourceUri;
+          yield RESOURCES.read(path);
+        } catch (IOException e) {
+          yield Map.of("error", "Failed to load resource: " + e.getMessage());
+        }
       }
       case "queryOntology" -> {
         String sparql = args.path("sparql").asText();

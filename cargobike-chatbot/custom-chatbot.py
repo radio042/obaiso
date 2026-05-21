@@ -54,6 +54,11 @@ Before choosing a tool, you MAY call queryOntology with a SPARQL SELECT query to
 verify class hierarchies or property applicability (e.g., confirm that
 cat:EbikeCargoBike is a subclass of cat:CargoBike before calling listCargoBikes).
 
+Before choosing a tool you must verify the tool choice using the OpenApi specifications 
+as reference using x-openapi from the tool definition.
+To load the API specification use the MCP tool loadResource for the specified resource URI.
+Use the x-openapi attribute resourceUri.
+
 In your final answer, populate the reasoning block with real URIs from the ontology
 above. Every concept in mapped_concepts and inferences_used must be a real URI.
 If no ontology inference was needed, set inferences_used to an empty list.
@@ -61,15 +66,18 @@ If no ontology inference was needed, set inferences_used to an empty list.
 
 
 def mcp_tool_to_openai(tool) -> dict:
-    """Convert an MCP Tool object to the OpenAI API tool dict format."""
+    """Convert an MCP Tool object to the OpenAI API tool dict format.
+
+    Tool-level x-openapi annotations are appended to
+    the description so the model can use them to look up details.
+    """
     description = tool.description or ""
-    sem = (tool.model_extra or {}).get("x-semantic") if hasattr(tool, "model_extra") else None
-    if sem:
-        description += (
-            f"\n[x-semantic: ontology={sem.get('ontology', '')},"
-            f" operatesOn={sem.get('operatesOn', '')},"
-            f" returns={sem.get('returns', '')}]"
-        )
+    extra = getattr(tool, "model_extra", None) or {}
+    ref = extra.get("x-openapi") if isinstance(extra, dict) else None
+    if isinstance(ref, dict):
+        description = (
+                description + f"\n[OpenAPI: {ref['resourceUri']}, operationId={ref['operationId']}]"
+        ).strip()
     return {
         "type": "function",
         "function": {
@@ -93,11 +101,11 @@ def _parse_structured_response(text: str) -> tuple[dict | None, str]:
     return None, text
 
 
-def _extract_semantic(description: str) -> dict | None:
-    """Extract x-semantic annotation from a tool description string."""
-    m = re.search(r'\[x-semantic:\s*ontology=(\S+?),\s*operatesOn=(\S+?),\s*returns=(\S+?)\]', description)
+def _extract_openapi(description: str) -> dict | None:
+    """Extract x-openapi annotation from a tool description string."""
+    m = re.search(r'\[OpenAPI:\s*(\S+?),\s*operationId=(\S+?)\]', description)
     if m:
-        return {"ontology": m.group(1), "operatesOn": m.group(2), "returns": m.group(3)}
+        return {"resourceUri": m.group(1), "operationId": m.group(2)}
     return None
 
 
@@ -137,12 +145,12 @@ def _build_reasoning(messages: list[dict], openai_tools: list[dict], user_input:
         if msg.get("role") == "assistant" and msg.get("tool_calls"):
             for tc in msg["tool_calls"]:
                 name = tc["function"]["name"]
-                sem = _extract_semantic(tool_map.get(name, {}).get("function", {}).get("description", ""))
+                openapi = _extract_openapi(tool_map.get(name, {}).get("function", {}).get("description", ""))
                 entry = {"tool": name}
-                if sem:
+                if openapi:
                     entry[
-                        "justified_by"] = f"{sem['ontology']} — tool operatesOn {sem['operatesOn']}, returns {sem['returns']}"
-                    for uri in (sem["ontology"], sem["operatesOn"], sem["returns"]):
+                        "justified_by"] = f"{openapi['resourceUri']} — operationId={openapi['operationId']}"
+                    for uri in (openapi["resourceUri"], openapi["operationId"]):
                         if uri and uri not in concepts:
                             concepts.append(uri)
                 tools_selected.append(entry)
